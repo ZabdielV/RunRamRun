@@ -16,22 +16,21 @@ import com.badlogic.gdx.utils.Align;
 public class PantallaJugando extends Pantalla {
     private final Juego juego;
 
-    private Texture texturaFondo;
 
-    private Stage escenaMenu;//Contenedor de objetos (Botones)
-
-    //Personaje
-    //Ramiro
+    //Boton de pausa
+    private Texture btnPausa;
+    //
+    //Personaje Ramiro
     private mx.itesm.equipo5.Ramiro ramiro;
-    private Texture texturaRamiroMov1,texturaRamiroMov2,texturaRamiroMov3,texturaRamiroSalto,texturaRamiroAgachado;
-    private float timerAnimaRamiro;
-    private final float TIEMPO_FRAME_Ramiro=1;
-    private float tiempoAgachado=0;
-    private float tiempoSaltando=0;
+    private Texture texturaRamiroMov1;
 
-    //botonAgachado
-    private Texture texturaBtnAgachado;
+    //Fondo
+    private Texture texturaFondo1;
+    private Texture texturaFondo1Copy;
+    private Texture texturaFondo2;
 
+    private float xFondo=0;
+    private int cambiosFondo=0;//Cuenta las veces que se ha movido el fondo...
 
     public PantallaJugando(Juego juego){
         this.juego=juego;
@@ -39,112 +38,77 @@ public class PantallaJugando extends Pantalla {
 
     @Override
     public void show() {
-        texturaFondo=new Texture("pantallaJugando/fondo1.png");
-        crearMenu();//Inicializa los botones
+        texturaFondo1 =new Texture("pantallaJugando/f1.png");
+        texturaFondo1Copy =new Texture("pantallaJugando/f1.png");
+        texturaFondo2=new Texture("pantallaJugando/f2.png");
+        crearBotones();
+
         crearRamiro();
-        crearBotonDisparo();
+
         Gdx.input.setInputProcessor(new ProcesadorEntrada());
     }
 
-    private void crearBotonDisparo() {
-        texturaBtnAgachado=new Texture("pantallaJugando/botonAbajo.png");
+    private void crearBotones() {
+        btnPausa=new Texture("pantallaJugando/botonPausa.png");
     }
+
 
     private void crearRamiro() {
-        texturaRamiroMov1= new Texture("pantallaJugando/personaje1/mov1.png");
-        texturaRamiroMov2= new Texture("pantallaJugando/personaje1/mov2.png");
-        texturaRamiroMov3= new Texture("pantallaJugando/personaje1/mov3.png");
-        texturaRamiroSalto= new Texture("pantallaJugando/personaje1/salto.png");
-        texturaRamiroAgachado= new Texture("pantallaJugando/personaje1/agachado.png");
-        ramiro=new Ramiro(texturaRamiroMov1,texturaRamiroMov2,texturaRamiroMov3,texturaRamiroSalto,texturaRamiroAgachado,150,50);
+        texturaRamiroMov1= new Texture("pantallaJugando/personaje1/movRamiro.png");//Sprite de movimientos
+
+
+        ramiro=new Ramiro(texturaRamiroMov1,150,50);
     }
 
-    private void crearMenu() {
-        escenaMenu = new Stage(vista);
-        //btnJugar
-        Texture texturaBtnPausa=new Texture("pantallaJugando/botonPausa.png");
-        TextureRegionDrawable trdBtnPausa=new TextureRegionDrawable(new TextureRegion(texturaBtnPausa));
 
-        //Inicializar boton Pausa
-        ImageButton btnPausa=new ImageButton(trdBtnPausa);
-        btnPausa.setPosition(ANCHO-100,ALTO-100, Align.center);
-
-        //Programar el evento de click
-        btnPausa.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-
-                //Cambiamos de pantalla (el objeto juego, setScreen)
-             //   juego.setScreen(new PantallaPausa(juego));
-            }
-        });
-
-
-       // escenaMenu.addActor(btnPausa);
-        Gdx.input.setInputProcessor(escenaMenu);
-    }
 
     @Override
     public void render(float delta) {
+        actualizar();
+
         borrarPantalla(0.2f,0.2f,0.2f);
         batch.setProjectionMatrix(camara.combined);
 
-        actualizarRamiro(delta);
+
 
         batch.begin();
-        batch.draw(texturaFondo,0,0);
-        batch.draw(texturaBtnAgachado,ANCHO-texturaBtnAgachado.getWidth()*2f,ALTO*0.2f);
+        batch.draw(texturaFondo1,xFondo,0);
+        batch.draw(texturaFondo1Copy,xFondo+ texturaFondo1.getWidth(),0);
+        batch.draw(btnPausa,ANCHO-100-btnPausa.getWidth()*0.5f,ALTO-100-btnPausa.getHeight()*0.5f);
+        //batch.draw(texturaBtnAgachado,ANCHO-texturaBtnAgachado.getWidth()*2f,ALTO*0.2f);//El boton de agachar
         ramiro.render(batch);
-
 
         batch.end();
 
 
-
-
-        escenaMenu.draw();
     }
 
-    private void actualizarRamiro(float delta) {
-        timerAnimaRamiro += delta;
-        if (ramiro.getEstado() == mx.itesm.equipo5.EstadoRamiro.AGACHADO) {//Se establece un tiempo de 1 segundo agachado
-            tiempoAgachado += delta;
+    private void actualizar() {
+        moverFondo();//Encargado de mover el fondo
+        actualizarRamiro();//Encargado de mover a Ramiro, No se usa
+    }
+
+    private void moverFondo() {//Mueve y cambia los fondos
+        xFondo-=10;
+        if(xFondo==-texturaFondo1.getWidth()){
+            xFondo=0;
+            cambiosFondo++;
+            //Gdx.app.log("cambios","cambios "+cambiosFondo);
         }
-        if (ramiro.getEstado() == mx.itesm.equipo5.EstadoRamiro.SALTO) {//Se establece un timpo de 1s saltando
-            tiempoSaltando += delta;
-            if (tiempoSaltando>=0&&tiempoSaltando<TIEMPO_FRAME_Ramiro/4) {
-                ramiro.moverArriba();
-            }
-            else if (tiempoSaltando>=TIEMPO_FRAME_Ramiro/4&&tiempoSaltando<TIEMPO_FRAME_Ramiro/2){
-                ramiro.moverAbajo();
-            }
-        }
-            if (timerAnimaRamiro >= TIEMPO_FRAME_Ramiro / 4) {
-                //Cambiar de estado
-                if (ramiro.getEstado() == mx.itesm.equipo5.EstadoRamiro.MOV1) {
-                    ramiro.setEstado(mx.itesm.equipo5.EstadoRamiro.MOV2);
-                } else if (ramiro.getEstado() == mx.itesm.equipo5.EstadoRamiro.MOV2) {
-                    ramiro.setEstado(mx.itesm.equipo5.EstadoRamiro.MOV3);
-                } else if (ramiro.getEstado() == mx.itesm.equipo5.EstadoRamiro.MOV3) {
-                    ramiro.setEstado(mx.itesm.equipo5.EstadoRamiro.MOV1);
-                } else if (ramiro.getEstado() == mx.itesm.equipo5.EstadoRamiro.AGACHADO && tiempoAgachado >= TIEMPO_FRAME_Ramiro / 2) {
-                    ramiro.setEstado(mx.itesm.equipo5.EstadoRamiro.MOV1);
-                    tiempoAgachado = 0;
-                } else if (ramiro.getEstado() == mx.itesm.equipo5.EstadoRamiro.SALTO && tiempoSaltando >= TIEMPO_FRAME_Ramiro / 2) {
-                    ramiro.setEstado(mx.itesm.equipo5.EstadoRamiro.MOV1);
-                    tiempoSaltando = 0;
-                    ramiro.sprite.setY(50);
-                }
-
-
-                timerAnimaRamiro = 0;//Reinicioa el conteo
-
-
-            }
-
+        if(cambiosFondo>=5){//Encargardo de cargar el fondo 2
+            texturaFondo1Copy=texturaFondo2;
 
         }
+        if(cambiosFondo>=6){
+            texturaFondo1=texturaFondo2;
+
+        }
+
+    }
+
+    private void actualizarRamiro() {
+        //ramiro.sprite.setX(ramiro.sprite.getX()+5);
+    }
 
 
     @Override
@@ -159,7 +123,7 @@ public class PantallaJugando extends Pantalla {
 
     @Override
     public void dispose() {
-        texturaFondo.dispose();
+        texturaFondo1.dispose();
 
     }
 
@@ -183,20 +147,19 @@ public class PantallaJugando extends Pantalla {
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             Vector3 v = new Vector3(screenX,screenY,0);
             camara.unproject(v);//Transforma las coordenadas...
-            //Toco el boton de agachado???
-            float xBoton=ANCHO-texturaBtnAgachado.getWidth()*2f;
-            float yBoton=ALTO*0.2f;
-            float anchBoton=texturaBtnAgachado.getWidth();
-            float altBoton=texturaBtnAgachado.getHeight();
-            Rectangle rectBotonAgachado= new Rectangle(xBoton,yBoton,anchBoton,altBoton);
-            if(rectBotonAgachado.contains(v.x,v.y)){
-                //Agachar???
-
-                ramiro.setEstado(mx.itesm.equipo5.EstadoRamiro.AGACHADO);
-            }else if (v.x<=ANCHO/2){//Aqui salta ramiro si se presiona culaquier parte de la pantalla
+            //boton de Pausa
+            float xBoton=ANCHO-100-btnPausa.getWidth()*0.5f;
+            float yBoton=ALTO-100-btnPausa.getHeight()*0.5f;
+            float anchBoton=btnPausa.getWidth();
+            float altBoton=btnPausa.getHeight();
+            Rectangle pausaBoton= new Rectangle(xBoton,yBoton,anchBoton,altBoton);
+            if(pausaBoton.contains(v.x,v.y)){
+                juego.setScreen(new PantallaPausa(juego));
+            }
+             else if (v.x<=ANCHO/2 &&ramiro.getEstado()==EstadoRamiro.CAMINADO){//Aqui salta ramiro si se presiona culaquier parte de la pantalla
                 //SALTO
 
-                ramiro.setEstado(EstadoRamiro.SALTO);
+                ramiro.setEstado(EstadoRamiro.SALTANDO);
             }
 
 
