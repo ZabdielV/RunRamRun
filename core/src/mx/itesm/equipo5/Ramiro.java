@@ -25,9 +25,6 @@ public class Ramiro extends Objeto{
     private float tVuelo;
 
 
-
-
-
     private EstadoRamiro estado;
 
     public Ramiro(Texture textura, float x, float y){

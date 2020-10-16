@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="100" height="25" tilewidth="32" tileheight="32" infinite="0" nextlayerid="8" nextobjectid="9">
  <tileset firstgid="1" name="base_n1" tilewidth="32" tileheight="32" tilecount="640" columns="40">
-  <image source="../../Escritorio/WhatsApp Image 2020-10-12 at 3.15.04 PM.jpeg" width="1280" height="512"/>
+  <image source="WhatsApp Image 2020-10-12 at 3.15.04 PM.jpeg" width="1280" height="512"/>
  </tileset>
  <layer id="1" name="Capa de patrones 1" width="100" height="25">
   <data encoding="csv">

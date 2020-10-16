@@ -2,8 +2,14 @@ package mx.itesm.equipo5;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -12,14 +18,21 @@ import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class PantallaJugando extends Pantalla {
     private final Juego juego;
-
+    //////////////////////////////////////////////////
+    //MAPAS TILED
+    private TiledMap mapa1_0;
+    private TiledMap mapa1_1;
+    private OrthogonalTiledMapRenderer renderMapas;
+    ////////////////////////////////////////////////
 
     //Boton de pausa
-    private Texture btnPausa;
-    //
+    private Texture textureBtnPausa;
+
     //Personaje Ramiro
     private mx.itesm.equipo5.Ramiro ramiro;
     private Texture texturaRamiroMov1;
@@ -29,33 +42,84 @@ public class PantallaJugando extends Pantalla {
     private Texture texturaFondo1Copy;
     private Texture texturaFondo2;
 
-    private float xFondo=0;
+    private float xFondo;
     private int cambiosFondo=0;//Cuenta las veces que se ha movido el fondo...
 
+    //Estados del juego
+    private EstadoJuego estadoJuego = EstadoJuego.JUGANDO;
+
+    //HUD
+    private Stage escenaHUD;
+    private OrthographicCamera camaraHUD;
+    private Viewport vistaHUD;
+
+
     public PantallaJugando(Juego juego){
-        this.juego=juego;
+        this.juego = juego;
     }
 
     @Override
     public void show() {
+        //////////////////////////////////////
+        //MAPAS TILED
+        crearMapa();
+
+        //////////////////////////////////////
+        crearHUD();
+
         texturaFondo1 =new Texture("pantallaJugando/f1.png");
         texturaFondo1Copy =new Texture("pantallaJugando/f1.png");
         texturaFondo2=new Texture("pantallaJugando/f2.png");
-        crearBotones();
+
+        //crearBotones();
 
         crearRamiro();
 
         Gdx.input.setInputProcessor(new ProcesadorEntrada());
     }
 
+     private void crearHUD() {
+        camaraHUD = new OrthographicCamera(ANCHO, ALTO);
+        camaraHUD.position.set(ANCHO/2, ALTO/2, 0);
+        camaraHUD.update();
+        vistaHUD = new StretchViewport(ANCHO, ALTO, camaraHUD);
+
+        //Escena
+        escenaHUD = new Stage(vistaHUD);
+
+        //Boton Pausa
+        textureBtnPausa= new Texture("pantallaJugando/botonPausa.png");
+        TextureRegionDrawable regionBtnPausa= new TextureRegionDrawable(new TextureRegion(textureBtnPausa));
+
+        ImageButton btnPausa= new ImageButton(regionBtnPausa);
+        btnPausa.setPosition(ANCHO*0.87f, ALTO*.78f);
+
+        escenaHUD.addActor(btnPausa);
+
+    }
+
+    private void crearMapa() {
+        //Ajustar para hacer un bucle infinito *******************************************
+
+        xFondo= camara.position.x+(ANCHO*.5f);
+        AssetManager manager = new AssetManager();
+        manager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
+        manager.load("Niveles/N1,Rural/n1.0.tmx", TiledMap.class);
+        manager.finishLoading();
+        mapa1_0 = manager.get("Niveles/N1,Rural/n1.0.tmx");
+        renderMapas = new OrthogonalTiledMapRenderer(mapa1_0);
+        Gdx.app.log("xfondo","XFONDO"+xFondo);
+
+    }
+
     private void crearBotones() {
-        btnPausa=new Texture("pantallaJugando/botonPausa.png");
+        Texture btnPausa=new Texture("pantallaJugando/botonPausa.png");
     }
 
 
     private void crearRamiro() {
-        texturaRamiroMov1= new Texture("pantallaJugando/personaje1/movRamiro.png");//Sprite de movimientos
 
+        texturaRamiroMov1= new Texture("pantallaJugando/personaje1/movRamiro.png");//Sprite de movimientos
 
         ramiro=new Ramiro(texturaRamiroMov1,150,50);
     }
@@ -64,28 +128,62 @@ public class PantallaJugando extends Pantalla {
 
     @Override
     public void render(float delta) {
-        actualizar();
+
+        if (estadoJuego == EstadoJuego.JUGANDO){
+            actualizarCamara();
+        }
+
 
         borrarPantalla(0.2f,0.2f,0.2f);
+
         batch.setProjectionMatrix(camara.combined);
 
+        ////////////////////////////////////////////////
+        //MAPAS TILED
+        renderMapas.setView(camara);
+        renderMapas.render();
 
+        ///////////////////////////////////////////////
 
         batch.begin();
-        batch.draw(texturaFondo1,xFondo,0);
-        batch.draw(texturaFondo1Copy,xFondo+ texturaFondo1.getWidth(),0);
-        batch.draw(btnPausa,ANCHO-100-btnPausa.getWidth()*0.5f,ALTO-100-btnPausa.getHeight()*0.5f);
+
+        //batch.draw(texturaFondo1,xFondo,0);
+        //batch.draw(texturaFondo1Copy,xFondo+ texturaFondo1.getWidth(),0);
+
+        //batch.draw(btnPausa,ANCHO-100-btnPausa.getWidth()*0.5f,ALTO-100-btnPausa.getHeight()*0.5f);
+
         //batch.draw(texturaBtnAgachado,ANCHO-texturaBtnAgachado.getWidth()*2f,ALTO*0.2f);//El boton de agachar
         ramiro.render(batch);
 
         batch.end();
 
+        //HUD
+        batch.setProjectionMatrix(camaraHUD.combined);
+        escenaHUD.draw();
+
+        if (estadoJuego == EstadoJuego.PAUSADO) {
+    //Implementar la pausa
+
+        }
+
 
     }
 
-    private void actualizar() {
-        moverFondo();//Encargado de mover el fondo
-        actualizarRamiro();//Encargado de mover a Ramiro, No se usa
+    private void actualizarCamara() {
+        //////////////////////////////////////////////////
+        //MAPAS TILED
+        camara.position.x= camara.position.x + 5;
+        camara.update();
+
+        //////////////////////////////////////////////////
+
+        //moverFondo();//Encargado de mover el fondo, sin Tiled
+
+        actualizarRamiro();//Encargado de mover a Ramiro
+    }
+
+    private void actualizarRamiro() {
+        ramiro.sprite.setX(camara.position.x - ANCHO*0.3f);
     }
 
     private void moverFondo() {//Mueve y cambia los fondos
@@ -105,11 +203,6 @@ public class PantallaJugando extends Pantalla {
         }
 
     }
-
-    private void actualizarRamiro() {
-        //ramiro.sprite.setX(ramiro.sprite.getX()+5);
-    }
-
 
     @Override
     public void pause() {
@@ -147,18 +240,18 @@ public class PantallaJugando extends Pantalla {
         public boolean touchDown(int screenX, int screenY, int pointer, int button) {
             Vector3 v = new Vector3(screenX,screenY,0);
             camara.unproject(v);//Transforma las coordenadas...
-            //boton de Pausa
-            float xBoton=ANCHO-100-btnPausa.getWidth()*0.5f;
-            float yBoton=ALTO-100-btnPausa.getHeight()*0.5f;
-            float anchBoton=btnPausa.getWidth();
-            float altBoton=btnPausa.getHeight();
-            Rectangle pausaBoton= new Rectangle(xBoton,yBoton,anchBoton,altBoton);
-            if(pausaBoton.contains(v.x,v.y)){
-                juego.setScreen(new PantallaPausa(juego));
-            }
-             else if (v.x<=ANCHO/2 &&ramiro.getEstado()==EstadoRamiro.CAMINADO){//Aqui salta ramiro si se presiona culaquier parte de la pantalla
-                //SALTO
 
+            //boton de Pausa
+            Rectangle pausaBotonPausa= new Rectangle(camara.position.x+(ANCHO*0.37f), camara.position.y+(ALTO*.37f),
+                     textureBtnPausa.getWidth(),textureBtnPausa.getHeight());
+
+            if(pausaBotonPausa.contains(v.x,v.y)){
+                //juego.setScreen(new PantallaPausa(juego));
+                estadoJuego = EstadoJuego.PAUSADO;
+
+            } else if (v.x <= camara.position.x && ramiro.getEstado() == EstadoRamiro.CAMINADO &&
+            estadoJuego != EstadoJuego.PAUSADO){//(v.x<=ANCHO/2){ //Aqui salta ramiro si se presiona culaquier parte de la pantalla
+                 //SALTO
                 ramiro.setEstado(EstadoRamiro.SALTANDO);
             }
 
@@ -185,5 +278,11 @@ public class PantallaJugando extends Pantalla {
         public boolean scrolled(int amount) {
             return false;
         }
+    }
+
+    private enum EstadoJuego {
+        JUGANDO,
+        PAUSADO,
+        REINICIO
     }
 }
