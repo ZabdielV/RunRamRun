@@ -23,15 +23,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class PantallaJugando extends Pantalla {
     private final Juego juego;
-    //////////////////////////////////////////////////
-    //MAPAS TILED
-    private TiledMap mapa1_0;
-    private TiledMap mapa1_1;
-    private OrthogonalTiledMapRenderer renderMapas;
-    ////////////////////////////////////////////////
 
     //Boton de pausa
-    private Texture textureBtnPausa;
+    private Texture btnPausa;
 
     //Personaje Ramiro
     private mx.itesm.equipo5.Ramiro ramiro;
@@ -60,18 +54,11 @@ public class PantallaJugando extends Pantalla {
 
     @Override
     public void show() {
-        //////////////////////////////////////
-        //MAPAS TILED
-        crearMapa();
-
-        //////////////////////////////////////
         crearHUD();
 
         texturaFondo1 =new Texture("pantallaJugando/f1.png");
         texturaFondo1Copy =new Texture("pantallaJugando/f1.png");
         texturaFondo2=new Texture("pantallaJugando/f2.png");
-
-        //crearBotones();
 
         crearRamiro();
 
@@ -88,8 +75,8 @@ public class PantallaJugando extends Pantalla {
         escenaHUD = new Stage(vistaHUD);
 
         //Boton Pausa
-        textureBtnPausa= new Texture("pantallaJugando/botonPausa.png");
-        TextureRegionDrawable regionBtnPausa= new TextureRegionDrawable(new TextureRegion(textureBtnPausa));
+        btnPausa= new Texture("pantallaJugando/botonPausa.png");
+        TextureRegionDrawable regionBtnPausa= new TextureRegionDrawable(new TextureRegion(btnPausa));
 
         ImageButton btnPausa= new ImageButton(regionBtnPausa);
         btnPausa.setPosition(ANCHO*0.87f, ALTO*.78f);
@@ -98,30 +85,12 @@ public class PantallaJugando extends Pantalla {
 
     }
 
-    private void crearMapa() {
-        //Ajustar para hacer un bucle infinito *******************************************
-
-        xFondo= camara.position.x+(ANCHO*.5f);
-        AssetManager manager = new AssetManager();
-        manager.setLoader(TiledMap.class, new TmxMapLoader(new InternalFileHandleResolver()));
-        manager.load("Niveles/N1,Rural/n1.0.tmx", TiledMap.class);
-        manager.finishLoading();
-        mapa1_0 = manager.get("Niveles/N1,Rural/n1.0.tmx");
-        renderMapas = new OrthogonalTiledMapRenderer(mapa1_0);
-        Gdx.app.log("xfondo","XFONDO"+xFondo);
-
-    }
-
-    private void crearBotones() {
-        Texture btnPausa=new Texture("pantallaJugando/botonPausa.png");
-    }
-
 
     private void crearRamiro() {
 
         texturaRamiroMov1= new Texture("pantallaJugando/personaje1/movRamiro.png");//Sprite de movimientos
-
         ramiro=new Ramiro(texturaRamiroMov1,150,50);
+
     }
 
 
@@ -138,21 +107,12 @@ public class PantallaJugando extends Pantalla {
 
         batch.setProjectionMatrix(camara.combined);
 
-        ////////////////////////////////////////////////
-        //MAPAS TILED
-        renderMapas.setView(camara);
-        renderMapas.render();
-
-        ///////////////////////////////////////////////
 
         batch.begin();
 
-        //batch.draw(texturaFondo1,xFondo,0);
-        //batch.draw(texturaFondo1Copy,xFondo+ texturaFondo1.getWidth(),0);
+        batch.draw(texturaFondo1,xFondo,0);
+        batch.draw(texturaFondo1Copy,xFondo+ texturaFondo1.getWidth(),0);
 
-        //batch.draw(btnPausa,ANCHO-100-btnPausa.getWidth()*0.5f,ALTO-100-btnPausa.getHeight()*0.5f);
-
-        //batch.draw(texturaBtnAgachado,ANCHO-texturaBtnAgachado.getWidth()*2f,ALTO*0.2f);//El boton de agachar
         ramiro.render(batch);
 
         batch.end();
@@ -162,24 +122,16 @@ public class PantallaJugando extends Pantalla {
         escenaHUD.draw();
 
         if (estadoJuego == EstadoJuego.PAUSADO) {
-    //Implementar la pausa
+        //Implementar la pausa
 
         }
-
-
     }
 
     private void actualizarCamara() {
-        //////////////////////////////////////////////////
-        //MAPAS TILED
-        camara.position.x= camara.position.x + 5;
-        camara.update();
 
-        //////////////////////////////////////////////////
-
-        //moverFondo();//Encargado de mover el fondo, sin Tiled
-
+        moverFondo();//Encargado de mover el fondo, sin Tiled
         actualizarRamiro();//Encargado de mover a Ramiro
+
     }
 
     private void actualizarRamiro() {
@@ -243,7 +195,7 @@ public class PantallaJugando extends Pantalla {
 
             //boton de Pausa
             Rectangle pausaBotonPausa= new Rectangle(camara.position.x+(ANCHO*0.37f), camara.position.y+(ALTO*.37f),
-                     textureBtnPausa.getWidth(),textureBtnPausa.getHeight());
+                     btnPausa.getWidth(),btnPausa.getHeight());
 
             if(pausaBotonPausa.contains(v.x,v.y)){
                 //juego.setScreen(new PantallaPausa(juego));
