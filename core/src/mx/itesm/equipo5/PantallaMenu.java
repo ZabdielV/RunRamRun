@@ -1,6 +1,8 @@
 package mx.itesm.equipo5;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -19,8 +21,11 @@ public class PantallaMenu extends Pantalla {
     //Menu (Botones)
     private Stage escenaMenu;//Contenedor de objetos (Botones)
 
+    //Imagenes
     private Texture texturaFondo,titulo;
 
+    //Efecto Sonido
+    private Sound efectoClick;
 
     public PantallaMenu(Juego juego) {
         this.juego=juego;
@@ -34,6 +39,19 @@ public class PantallaMenu extends Pantalla {
 
        titulo=new Texture("titulo.png");
         crearMenu();
+        crearAudio();
+    }
+
+    private void crearAudio() {
+
+        //Cargar preferencias
+        //Preguntar si la preferencia de sonido es true
+        AssetManager manager=new AssetManager();
+        manager.load("sounds/Click.mp3",Sound.class);
+
+        manager.finishLoading();//Espera a cargar todos los recursos
+        efectoClick=manager.get("sounds/Click.mp3");
+
     }
 
     private void crearMenu() {
@@ -81,7 +99,7 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-
+                efectoClick.play();
                 //Cambiamos de pantalla (el objeto juego, setScreen)
                 juego.setScreen(new PantallaJugando(juego));
             }
@@ -91,7 +109,7 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-
+                efectoClick.play();
                 //Cambiamos de pantalla (el objeto juego, setScreen)
                 juego.setScreen(new PantallaMarcadores(juego));
             }
@@ -101,7 +119,7 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-
+                efectoClick.play();
                 //Cambiamos de pantalla (el objeto juego, setScreen)
                 juego.setScreen(new PantallaAcerca(juego));
             }
@@ -110,7 +128,7 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-
+                efectoClick.play();
                 //Cambiamos de pantalla (el objeto juego, setScreen)
                 juego.setScreen(new PantallaAyuda(juego));
             }
@@ -120,7 +138,7 @@ public class PantallaMenu extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-
+                efectoClick.play();
                 //Cambiamos de pantalla (el objeto juego, setScreen)
                 juego.setScreen(new PantallaConfig(juego));
             }
@@ -142,7 +160,7 @@ public class PantallaMenu extends Pantalla {
 
         batch.begin();
         batch.draw(texturaFondo,0,0);
-        batch.draw(titulo,ANCHO/2-(titulo.getWidth()/2),ALTO-100);
+        batch.draw(titulo,ANCHO/2-(titulo.getWidth()/2f),ALTO-100);
         batch.end();
         escenaMenu.draw();
 

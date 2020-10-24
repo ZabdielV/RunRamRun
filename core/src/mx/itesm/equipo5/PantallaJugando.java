@@ -3,21 +3,22 @@ package mx.itesm.equipo5;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
@@ -27,6 +28,11 @@ public class PantallaJugando extends Pantalla {
     //Boton de pausa
     private Texture btnPausa;
 
+    //Barra de corazones: Salud
+    private Array<Texture> arrCorazones;
+    //Vidas
+    private int vidas=3;
+
     //Personaje Ramiro
     private mx.itesm.equipo5.Ramiro ramiro;
     private Texture texturaRamiroMov1;
@@ -35,12 +41,26 @@ public class PantallaJugando extends Pantalla {
     private Texture texturaFondo1;
     private Texture texturaFondo1Copy;
     private Texture texturaFondo2;
+    private Texture texturaFondo3;
+
+    //Efecto sonido
+    private Sound efectoClick;
+    private Sound efetoSalto;
+
+    //Texto
+    private Texto texto;
+
+    //Puntos  //Los puntos que gana en el marcador. MARCADOR
+    private float puntos;//
 
     private float xFondo;
     private int cambiosFondo=0;//Cuenta las veces que se ha movido el fondo...
 
     //Estados del juego
     private EstadoJuego estadoJuego = EstadoJuego.JUGANDO;
+
+    //Pausa
+    private EscenaPausa escenaPausa;
 
     //HUD
     private Stage escenaHUD;
@@ -55,26 +75,60 @@ public class PantallaJugando extends Pantalla {
     @Override
     public void show() {
         crearHUD();
-
-        texturaFondo1 =new Texture("pantallaJugando/f1.png");
-        texturaFondo1Copy =new Texture("pantallaJugando/f1.png");
-        texturaFondo2=new Texture("pantallaJugando/f2.png");
-
+        crearFondos();
         crearRamiro();
+        crearTexto();
+        crearAudio();
+        crearCorazones();
+        //Boton de pausa
+        btnPausa=new Texture("pantallaJugando/botonPausa.png");
+
 
         Gdx.input.setInputProcessor(new ProcesadorEntrada());
     }
 
-     private void crearHUD() {
+    private void crearCorazones() {
+        arrCorazones=new Array<>(vidas);
+        for (int i = 0; i <vidas ; i++) {
+            Texture corazones=new Texture("pantallaJugando/corazon.png");
+            arrCorazones.add(corazones);
+        }
+
+    }
+
+    private void crearAudio() {
+        AssetManager manager=new AssetManager();
+        manager.load("sounds/Click.mp3",Sound.class);
+        manager.load("sounds/Salto.mp3",Sound.class);
+
+        manager.finishLoading();//Espera a cargar todos los recursos
+        efectoClick=manager.get("sounds/Click.mp3");
+        efetoSalto=manager.get("sounds/Salto.mp3");
+    }
+
+    private void crearTexto() {
+        texto=new Texto("game.fnt");
+    }
+
+    private void crearFondos() {
+        texturaFondo1 =new Texture("pantallaJugando/f1.png");
+        texturaFondo1Copy =new Texture("pantallaJugando/f1.png");
+        texturaFondo2=new Texture("pantallaJugando/f2.png");
+        texturaFondo3=new Texture("pantallaJugando/f3.png");
+
+    }
+
+    private void crearHUD() {//Pausa
         camaraHUD = new OrthographicCamera(ANCHO, ALTO);
         camaraHUD.position.set(ANCHO/2, ALTO/2, 0);
         camaraHUD.update();
         vistaHUD = new StretchViewport(ANCHO, ALTO, camaraHUD);
 
         //Escena
-        escenaHUD = new Stage(vistaHUD);
+        //escenaHUD = new Stage(vistaHUD);
 
         //Boton Pausa
+        /*
         btnPausa= new Texture("pantallaJugando/botonPausa.png");
         TextureRegionDrawable regionBtnPausa= new TextureRegionDrawable(new TextureRegion(btnPausa));
 
@@ -82,6 +136,8 @@ public class PantallaJugando extends Pantalla {
         btnPausa.setPosition(ANCHO*0.87f, ALTO*.78f);
 
         escenaHUD.addActor(btnPausa);
+        */
+
 
     }
 
@@ -98,39 +154,61 @@ public class PantallaJugando extends Pantalla {
     @Override
     public void render(float delta) {
 
-        if (estadoJuego == EstadoJuego.JUGANDO){
-            actualizarCamara();
-        }
-
-
         borrarPantalla(0.2f,0.2f,0.2f);
-
         batch.setProjectionMatrix(camara.combined);
-
-
         batch.begin();
-
         batch.draw(texturaFondo1,xFondo,0);
         batch.draw(texturaFondo1Copy,xFondo+ texturaFondo1.getWidth(),0);
 
-        ramiro.render(batch);
+
+        if (estadoJuego == EstadoJuego.JUGANDO){
+            actualizar();
+            dibujarTexto();
+            dibujarCorazones();
+            ramiro.render(batch);
+            batch.draw(btnPausa,ANCHO-100-btnPausa.getWidth()*0.5f,ALTO-100-btnPausa.getHeight()*0.5f);
+        }
 
         batch.end();
 
+
         //HUD
+       // batch.setProjectionMatrix(camaraHUD.combined);
+        //escenaHUD.draw();
+
+        if (estadoJuego == EstadoJuego.PAUSADO) {   //Implementar la pausa
+
+
+
         batch.setProjectionMatrix(camaraHUD.combined);
-        escenaHUD.draw();
+            escenaPausa.draw();
 
-        if (estadoJuego == EstadoJuego.PAUSADO) {
-        //Implementar la pausa
+            batch.begin();
+            batch.draw(escenaPausa.pausa,ANCHO*0.4f,ALTO*0.90f);
 
+            batch.end();
         }
+
+
     }
 
-    private void actualizarCamara() {
+    private void dibujarCorazones() {
+        for (int i = 0; i <arrCorazones.size; i++) {
+            batch.draw(arrCorazones.get(i),ANCHO*0.02f+i*150,ALTO*0.8f);
+        }
 
-        moverFondo();//Encargado de mover el fondo, sin Tiled
-        actualizarRamiro();//Encargado de mover a Ramiro
+    }
+
+    private void dibujarTexto() {
+        // texto.mostrarMensaje(batch,"Super Mario Tec",ANCHO/2,0.9f*ALTO);
+        // puntos+=Gdx.graphics.getDeltaTime();
+        int puntosInt=(int)puntos;
+        texto.mostrarMensaje(batch,"Puntos: "+puntosInt,ANCHO*0.6f,0.9f*ALTO);
+    }
+
+
+    private void actualizar() {
+    moverFondo();
 
     }
 
@@ -153,6 +231,14 @@ public class PantallaJugando extends Pantalla {
             texturaFondo1=texturaFondo2;
 
         }
+        if(cambiosFondo>=10){//Encargardo de cargar el fondo 3
+            texturaFondo1Copy=texturaFondo3;
+
+        }
+        if(cambiosFondo>=11){
+            texturaFondo1=texturaFondo3;
+
+        }
 
     }
 
@@ -169,6 +255,10 @@ public class PantallaJugando extends Pantalla {
     @Override
     public void dispose() {
         texturaFondo1.dispose();
+        texturaFondo1Copy.dispose();
+        texturaFondo2.dispose();
+        texturaFondo3.dispose();
+
 
     }
 
@@ -194,17 +284,30 @@ public class PantallaJugando extends Pantalla {
             camara.unproject(v);//Transforma las coordenadas...
 
             //boton de Pausa
-            Rectangle pausaBotonPausa= new Rectangle(camara.position.x+(ANCHO*0.37f), camara.position.y+(ALTO*.37f),
+            Rectangle pausaBotonPausa= new Rectangle(ANCHO-100-btnPausa.getWidth()*0.5f, ALTO-100-btnPausa.getHeight()*0.5f,
                      btnPausa.getWidth(),btnPausa.getHeight());
 
-            if(pausaBotonPausa.contains(v.x,v.y)){
-                //juego.setScreen(new PantallaPausa(juego));
-                estadoJuego = EstadoJuego.PAUSADO;
+            if(pausaBotonPausa.contains(v.x,v.y)){//Pausa
+                if(estadoJuego==EstadoJuego.JUGANDO){
+                    estadoJuego=EstadoJuego.PAUSADO;
+                    //Crear escena Pausa
+                    if(escenaPausa==null){
+                        escenaPausa=new EscenaPausa(vistaHUD,batch);
+                    }
+                    Gdx.input.setInputProcessor(escenaPausa);
+                    efectoClick.play();
+                }
+
+               // juego.setScreen(new PantallaPausa(juego));
+                //estadoJuego = EstadoJuego.PAUSADO;
 
             } else if (v.x <= camara.position.x && ramiro.getEstado() == EstadoRamiro.CAMINADO &&
             estadoJuego != EstadoJuego.PAUSADO){//(v.x<=ANCHO/2){ //Aqui salta ramiro si se presiona culaquier parte de la pantalla
                  //SALTO
+                efetoSalto.play();
                 ramiro.setEstado(EstadoRamiro.SALTANDO);
+            }else if(estadoJuego==EstadoJuego.PAUSADO){
+                estadoJuego=EstadoJuego.JUGANDO;
             }
 
 
@@ -235,6 +338,80 @@ public class PantallaJugando extends Pantalla {
     private enum EstadoJuego {
         JUGANDO,
         PAUSADO,
+        PIERDE,
+        GANA,
         REINICIO
+    }
+
+    private class EscenaPausa extends Stage{
+        //Titulo de Pausa
+        Texture pausa;
+
+
+    public EscenaPausa(Viewport vista, SpriteBatch batch){
+        super(vista,batch);
+
+
+        pausa=new Texture("pantallaPausa/Pausa.png");
+
+        Pixmap pixmap=new Pixmap((int)(ANCHO*0.85f),(int)(0.8f*ALTO), Pixmap.Format.RGBA8888);
+        pixmap.setColor(0,0,0,0.5f);
+
+        pixmap.fillRectangle(0,0,pixmap.getWidth(),pixmap.getHeight());
+
+        Texture texture= new Texture(pixmap);
+        Image imgPausa=new Image(texture);
+        imgPausa.setPosition(ANCHO/2-pixmap.getWidth()/2f,ALTO/2-pixmap.getHeight()/2f);
+        this.addActor(imgPausa);
+
+        //Boton de Continuar
+        Texture texturaContinuar=new Texture("pantallaPausa/Cont.png");
+        TextureRegionDrawable regionCont=new TextureRegionDrawable(new TextureRegion(texturaContinuar));
+        ImageButton btnContinuar=new ImageButton(regionCont);
+        btnContinuar.setPosition(640,ALTO-200, Align.center);
+        btnContinuar.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                estadoJuego=EstadoJuego.JUGANDO;
+                efectoClick.play();
+                Gdx.input.setInputProcessor(new ProcesadorEntrada());
+            }
+        });
+        this.addActor(btnContinuar);
+        //Boton reiniciar
+        Texture texturaReset=new Texture("pantallaPausa/Reset.png");
+        TextureRegionDrawable regionReset=new TextureRegionDrawable(new TextureRegion(texturaReset));
+        ImageButton btnReset=new ImageButton(regionReset);
+        btnReset.setPosition(640,ALTO-357, Align.center);
+        btnReset.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                estadoJuego=EstadoJuego.JUGANDO;
+                efectoClick.play();
+                juego.setScreen(new PantallaJugando(juego));
+            }
+        });
+        this.addActor(btnReset);
+
+        //Boton de Salir
+        Texture texturaSalir=new Texture("pantallaPausa/Salir.png");
+        TextureRegionDrawable regionSalir=new TextureRegionDrawable(new TextureRegion(texturaSalir));
+        ImageButton btnSalir=new ImageButton(regionSalir);
+        btnSalir.setPosition(640,ALTO-513, Align.center);
+        btnSalir.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                estadoJuego=EstadoJuego.JUGANDO;
+                efectoClick.play();
+                Gdx.input.setInputProcessor(new ProcesadorEntrada());
+                juego.setScreen(new PantallaMenu(juego));
+            }
+        });
+        this.addActor(btnSalir);
+    }
+
     }
 }

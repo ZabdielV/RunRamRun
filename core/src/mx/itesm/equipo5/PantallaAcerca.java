@@ -1,6 +1,8 @@
 package mx.itesm.equipo5;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -23,7 +25,8 @@ public class PantallaAcerca extends Pantalla {
     private Texture texturaFondo,titulo;
 
 
-
+    //Efecto Sonido
+    private Sound efectoClick;
 
     public PantallaAcerca(Juego juego) {
         this.juego=juego;
@@ -36,6 +39,15 @@ public class PantallaAcerca extends Pantalla {
 
      //   titulo=new Texture("titulo.png");
         crearMenu();
+        crearAudio();
+    }
+
+    private void crearAudio() {
+        AssetManager manager=new AssetManager();
+        manager.load("sounds/Click.mp3",Sound.class);
+
+        manager.finishLoading();//Espera a cargar todos los recursos
+        efectoClick=manager.get("sounds/Click.mp3");
     }
 
     private void crearMenu() {
@@ -51,7 +63,7 @@ public class PantallaAcerca extends Pantalla {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
-
+                efectoClick.play();
                 //Cambiamos de pantalla (el objeto juego, setScreen)
                 juego.setScreen(new PantallaMenu(juego));
             }
