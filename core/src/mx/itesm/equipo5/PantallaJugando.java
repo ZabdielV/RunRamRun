@@ -37,11 +37,15 @@ public class PantallaJugando extends Pantalla {
     private mx.itesm.equipo5.Ramiro ramiro;
     private Texture texturaRamiroMov1;
 
-    //Fondo
+    //Fondos
     private Texture texturaFondo1;
-    private Texture texturaFondo1Copy;
+    private Texture texturaFondoCopy;
     private Texture texturaFondo2;
     private Texture texturaFondo3;
+    private Texture texturaFondo4;
+    private Texture texturaFondo5;
+    //Transiciones
+    private Texture ruralUrbano;
 
     //Efecto sonido
     private Sound efectoClick;
@@ -51,7 +55,7 @@ public class PantallaJugando extends Pantalla {
     private Texto texto;
 
     //Puntos  //Los puntos que gana en el marcador. MARCADOR
-    private float puntos;//
+    private float puntos= 0;//
 
     private float xFondo;
     private int cambiosFondo=0;//Cuenta las veces que se ha movido el fondo...
@@ -111,10 +115,13 @@ public class PantallaJugando extends Pantalla {
     }
 
     private void crearFondos() {
-        texturaFondo1 =new Texture("pantallaJugando/f1.png");
-        texturaFondo1Copy =new Texture("pantallaJugando/f1.png");
-        texturaFondo2=new Texture("pantallaJugando/f2.png");
-        texturaFondo3=new Texture("pantallaJugando/f3.png");
+        texturaFondo1 =new Texture("pantallaJugando/Mapas/Rural/nivelRural1_1.png");
+        texturaFondo2=new Texture("pantallaJugando/Mapas/Rural/nivelRural1_2.png");
+        texturaFondo3=new Texture("pantallaJugando/Mapas/Rural/nivelRural1_3.png");
+        texturaFondo4=new Texture("pantallaJugando/Mapas/Rural/nivelRural1_4.png");
+        texturaFondo5=new Texture("pantallaJugando/Mapas/Rural/nivelRural1_5.png");
+
+        texturaFondoCopy= texturaFondo1;
 
     }
 
@@ -141,15 +148,12 @@ public class PantallaJugando extends Pantalla {
 
     }
 
-
     private void crearRamiro() {
 
         texturaRamiroMov1= new Texture("pantallaJugando/personaje1/movRamiro.png");//Sprite de movimientos
         ramiro=new Ramiro(texturaRamiroMov1,150,50);
 
     }
-
-
 
     @Override
     public void render(float delta) {
@@ -158,7 +162,7 @@ public class PantallaJugando extends Pantalla {
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
         batch.draw(texturaFondo1,xFondo,0);
-        batch.draw(texturaFondo1Copy,xFondo+ texturaFondo1.getWidth(),0);
+        batch.draw(texturaFondoCopy,xFondo+ texturaFondo1.getWidth(),0);
 
 
         if (estadoJuego == EstadoJuego.JUGANDO){
@@ -194,7 +198,7 @@ public class PantallaJugando extends Pantalla {
 
     private void dibujarCorazones() {
         for (int i = 0; i <arrCorazones.size; i++) {
-            batch.draw(arrCorazones.get(i),ANCHO*0.02f+i*150,ALTO*0.8f);
+            batch.draw(arrCorazones.get(i),ANCHO*0.02f+i*105,ALTO*0.8f);
         }
 
     }
@@ -203,59 +207,69 @@ public class PantallaJugando extends Pantalla {
         // texto.mostrarMensaje(batch,"Super Mario Tec",ANCHO/2,0.9f*ALTO);
         // puntos+=Gdx.graphics.getDeltaTime();
         int puntosInt=(int)puntos;
-        texto.mostrarMensaje(batch,"Puntos: "+puntosInt,ANCHO*0.6f,0.9f*ALTO);
+        texto.mostrarMensaje(batch,"Puntos: "+puntosInt,ANCHO*0.6f+80,ALTO*0.9f+20);
     }
-
 
     private void actualizar() {
     moverFondo();
-
     }
 
-    private void actualizarRamiro() {
-        ramiro.sprite.setX(camara.position.x - ANCHO*0.3f);
-    }
-
-    private void moverFondo() {//Mueve y cambia los fondos
+    private void moverFondo() {//Mueve y cambia los fondos ademas modifica marcador dependiento de distancia
         xFondo-=10;
         if(xFondo==-texturaFondo1.getWidth()){
             xFondo=0;
             cambiosFondo++;
             //Gdx.app.log("cambios","cambios "+cambiosFondo);
         }
+        if (cambiosFondo < 5){
+            puntos += 3*0.03f;
+        }
         if(cambiosFondo>=5){//Encargardo de cargar el fondo 2
-            texturaFondo1Copy=texturaFondo2;
-
+            texturaFondoCopy=texturaFondo2;
+            puntos += 3*0.03f;
         }
         if(cambiosFondo>=6){
             texturaFondo1=texturaFondo2;
-
+            puntos += 3*0.03f;
         }
         if(cambiosFondo>=10){//Encargardo de cargar el fondo 3
-            texturaFondo1Copy=texturaFondo3;
-
+            texturaFondoCopy=texturaFondo3;
+            puntos += 3*0.04f;
         }
         if(cambiosFondo>=11){
             texturaFondo1=texturaFondo3;
-
+            puntos += 3*0.04f;
         }
-
+        if (cambiosFondo >= 15){
+            texturaFondoCopy= texturaFondo4;
+            puntos += 3*0.04f;
+        }
+        if (cambiosFondo >= 16){
+            texturaFondo1= texturaFondo4;
+            puntos += 3*0.05f;
+        }
+        if (cambiosFondo >= 19){
+            texturaFondoCopy= texturaFondo5;
+            puntos += 3*0.05f;
+        }
+        if (cambiosFondo >= 20){
+            texturaFondo1= texturaFondo5;
+            puntos += 3*0.05f;
+        }
     }
 
     @Override
     public void pause() {
-
     }
 
     @Override
     public void resume() {
-
     }
 
     @Override
     public void dispose() {
         texturaFondo1.dispose();
-        texturaFondo1Copy.dispose();
+        texturaFondoCopy.dispose();
         texturaFondo2.dispose();
         texturaFondo3.dispose();
 
@@ -302,7 +316,7 @@ public class PantallaJugando extends Pantalla {
                 //estadoJuego = EstadoJuego.PAUSADO;
 
             } else if (v.x <= camara.position.x && ramiro.getEstado() == EstadoRamiro.CAMINADO &&
-            estadoJuego != EstadoJuego.PAUSADO){//(v.x<=ANCHO/2){ //Aqui salta ramiro si se presiona culaquier parte de la pantalla
+            estadoJuego != EstadoJuego.PAUSADO){ //Aqui salta ramiro si se presiona culaquier parte de la pantalla
                  //SALTO
                 efetoSalto.play();
                 ramiro.setEstado(EstadoRamiro.SALTANDO);
