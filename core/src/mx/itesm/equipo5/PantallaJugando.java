@@ -207,7 +207,7 @@ public class PantallaJugando extends Pantalla {
         // texto.mostrarMensaje(batch,"Super Mario Tec",ANCHO/2,0.9f*ALTO);
         // puntos+=Gdx.graphics.getDeltaTime();
         int puntosInt=(int)puntos;
-        texto.mostrarMensaje(batch,"Puntos: "+puntosInt,ANCHO*0.6f+80,ALTO*0.9f+20);
+        texto.mostrarMensaje(batch,"Points: "+puntosInt,ANCHO*0.6f+80,ALTO*0.9f+20);
     }
 
     private void actualizar() {
