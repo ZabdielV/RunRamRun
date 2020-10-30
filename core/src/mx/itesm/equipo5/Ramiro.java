@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-
 public class Ramiro extends Objeto{
 
     private Animation<TextureRegion> animacion;//Los frames del personaje...
@@ -23,7 +22,6 @@ public class Ramiro extends Objeto{
     private final float V0=100;
     private final float G=20;
     private float tVuelo;
-
 
     private EstadoRamiro estado;
 

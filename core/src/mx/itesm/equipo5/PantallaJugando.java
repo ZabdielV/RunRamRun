@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -45,7 +46,8 @@ public class PantallaJugando extends Pantalla {
     private Texture texturaFondo4;
     private Texture texturaFondo5;
     //Transiciones
-    private Texture ruralUrbano;
+    //private Texture ruralUrbano;
+    private boolean transicionUrbanaRural= false;
 
     //Efecto sonido
     private Sound efectoClick;
@@ -71,6 +73,15 @@ public class PantallaJugando extends Pantalla {
     private OrthographicCamera camaraHUD;
     private Viewport vistaHUD;
 
+    //Enemigos
+    private Texture texturaCamioneta;
+    private Texture texturaCocheLujo;
+    private float posicionAuto= ANCHO;
+    private Texture texturaCarrito;
+
+    private float timerCreacionEnemigo;
+    private final float TIEMPO_CREACION_ENEMIGO = 30;
+    private boolean cicloTimer= true;
 
     public PantallaJugando(Juego juego){
         this.juego = juego;
@@ -84,11 +95,21 @@ public class PantallaJugando extends Pantalla {
         crearTexto();
         crearAudio();
         crearCorazones();
+        crearEnemigos();
+
         //Boton de pausa
         btnPausa=new Texture("pantallaJugando/botonPausa.png");
 
-
         Gdx.input.setInputProcessor(new ProcesadorEntrada());
+    }
+
+    private void crearEnemigos() {
+        if (cambiosFondo <25 && transicionUrbanaRural == false){
+            texturaCamioneta = new Texture("pantallaJugando/Enemigos/camioneta.png");
+        } else {
+            texturaCocheLujo = new Texture("pantallaJugando/Enemigos/carro.png");
+        }
+        //texturaCarrito = new Texture("pantallaJugando/Enemigos/camioneta.png"); Cuando se implemente escuela
     }
 
     private void crearCorazones() {
@@ -164,24 +185,22 @@ public class PantallaJugando extends Pantalla {
         batch.draw(texturaFondo1,xFondo,0);
         batch.draw(texturaFondoCopy,xFondo+ texturaFondo1.getWidth(),0);
 
-
         if (estadoJuego == EstadoJuego.JUGANDO){
             actualizar();
             dibujarTexto();
             dibujarCorazones();
+            dibujarEnemigos();
             ramiro.render(batch);
             batch.draw(btnPausa,ANCHO-100-btnPausa.getWidth()*0.5f,ALTO-100-btnPausa.getHeight()*0.5f);
         }
 
         batch.end();
 
-
         //HUD
-       // batch.setProjectionMatrix(camaraHUD.combined);
+        // batch.setProjectionMatrix(camaraHUD.combined);
         //escenaHUD.draw();
 
         if (estadoJuego == EstadoJuego.PAUSADO) {   //Implementar la pausa
-
 
 
         batch.setProjectionMatrix(camaraHUD.combined);
@@ -192,8 +211,14 @@ public class PantallaJugando extends Pantalla {
 
             batch.end();
         }
+    }
 
-
+    private void dibujarEnemigos() {
+        if (cambiosFondo <25 && transicionUrbanaRural == false){
+            batch.draw(texturaCamioneta, posicionAuto,50);
+        } else {
+            batch.draw(texturaCocheLujo, posicionAuto, 50);
+        }
     }
 
     private void dibujarCorazones() {
@@ -204,14 +229,40 @@ public class PantallaJugando extends Pantalla {
     }
 
     private void dibujarTexto() {
-        // texto.mostrarMensaje(batch,"Super Mario Tec",ANCHO/2,0.9f*ALTO);
-        // puntos+=Gdx.graphics.getDeltaTime();
         int puntosInt=(int)puntos;
         texto.mostrarMensaje(batch,"Points: "+puntosInt,ANCHO*0.6f+80,ALTO*0.9f+20);
     }
 
     private void actualizar() {
-    moverFondo();
+        moverFondo();
+        actualizarEnemigos();
+    }
+
+    private void actualizarEnemigos() {
+        if (cicloTimer == true){
+            actualizarPosicionAuto();
+        }
+        timerCreacionEnemigo+= Gdx.graphics.getDeltaTime();
+        if (timerCreacionEnemigo >= TIEMPO_CREACION_ENEMIGO){
+            timerCreacionEnemigo = 0;
+            posicionAuto = ANCHO;
+            cicloTimer = true;
+        }
+        if (cambiosFondo <25 && transicionUrbanaRural == false){
+            if (posicionAuto + texturaCamioneta.getWidth() < 0){
+                posicionAuto = ANCHO+ 5;
+                cicloTimer=false;
+            }
+        } else {
+            if (posicionAuto + texturaCocheLujo.getWidth() < 0){
+                posicionAuto = ANCHO+ 5;
+                cicloTimer=false;
+            }
+        }
+    }
+
+    private void actualizarPosicionAuto() {
+        posicionAuto -= 15;
     }
 
     private void moverFondo() {//Mueve y cambia los fondos ademas modifica marcador dependiento de distancia
@@ -219,7 +270,6 @@ public class PantallaJugando extends Pantalla {
         if(xFondo==-texturaFondo1.getWidth()){
             xFondo=0;
             cambiosFondo++;
-            //Gdx.app.log("cambios","cambios "+cambiosFondo);
         }
         if (cambiosFondo < 5){
             puntos += 3*0.03f;
@@ -272,7 +322,8 @@ public class PantallaJugando extends Pantalla {
         texturaFondoCopy.dispose();
         texturaFondo2.dispose();
         texturaFondo3.dispose();
-
+        texturaFondo4.dispose();
+        texturaFondo5.dispose();
 
     }
 
