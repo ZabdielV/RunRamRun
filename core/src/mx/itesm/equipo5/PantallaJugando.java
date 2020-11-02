@@ -108,11 +108,9 @@ public class PantallaJugando extends Pantalla {
     }
 
     private void crearEnemigos() {
-        if (cambiosFondo <25 && transicionUrbanaRural == false){
             texturaCamioneta = new Texture("pantallaJugando/Enemigos/camioneta.png");
-        } else {
             texturaCocheLujo = new Texture("pantallaJugando/Enemigos/carro.png");
-        }
+
         //texturaCarrito = new Texture("pantallaJugando/Enemigos/camioneta.png"); Cuando se implemente escuela
     }
 
@@ -179,10 +177,8 @@ public class PantallaJugando extends Pantalla {
     }
 
     private void crearRamiro() {
-
         texturaRamiroMov1= new Texture("pantallaJugando/personaje1/movRamiro.png");//Sprite de movimientos
         ramiro=new Ramiro(texturaRamiroMov1,150,50);
-
     }
 
     @Override
@@ -263,7 +259,7 @@ public class PantallaJugando extends Pantalla {
                 cicloTimer=false;
             }
         } else {
-            if (posicionAuto + texturaCocheLujo.getWidth() < 0){
+            if (cambiosFondo> 25 && posicionAuto + texturaCocheLujo.getWidth() < 0){
                 posicionAuto = ANCHO+ 5;
                 cicloTimer=false;
             }
