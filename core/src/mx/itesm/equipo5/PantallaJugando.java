@@ -3,6 +3,7 @@ package mx.itesm.equipo5;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -73,6 +74,9 @@ public class PantallaJugando extends Pantalla {
     private OrthographicCamera camaraHUD;
     private Viewport vistaHUD;
 
+    // Musica
+    private Music musicaFondo;
+
     //Enemigos
     private Texture texturaCamioneta;
     private Texture texturaCocheLujo;
@@ -123,10 +127,15 @@ public class PantallaJugando extends Pantalla {
 
     private void crearAudio() {
         AssetManager manager=new AssetManager();
+        manager.load("sounds/Gameplay.mp3",Music.class);
         manager.load("sounds/Click.mp3",Sound.class);
         manager.load("sounds/Salto.mp3",Sound.class);
 
         manager.finishLoading();//Espera a cargar todos los recursos
+        musicaFondo =manager.get("sounds/Gameplay.mp3");
+        musicaFondo.setVolume(0.2f);
+        musicaFondo.setLooping(true);
+        musicaFondo.play();
         efectoClick=manager.get("sounds/Click.mp3");
         efetoSalto=manager.get("sounds/Salto.mp3");
     }
