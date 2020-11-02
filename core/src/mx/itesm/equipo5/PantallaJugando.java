@@ -207,8 +207,7 @@ public class PantallaJugando extends Pantalla {
 
         if (estadoJuego == EstadoJuego.PAUSADO) {   //Implementar la pausa
 
-
-        batch.setProjectionMatrix(camaraHUD.combined);
+            batch.setProjectionMatrix(camaraHUD.combined);
             escenaPausa.draw();
 
             batch.begin();
@@ -366,6 +365,7 @@ public class PantallaJugando extends Pantalla {
                     }
                     Gdx.input.setInputProcessor(escenaPausa);
                     efectoClick.play();
+                    musicaFondo.pause();
                 }
 
                // juego.setScreen(new PantallaPausa(juego));
@@ -445,6 +445,7 @@ public class PantallaJugando extends Pantalla {
                 super.clicked(event, x, y);
                 estadoJuego=EstadoJuego.JUGANDO;
                 efectoClick.play();
+                musicaFondo.play();
                 Gdx.input.setInputProcessor(new ProcesadorEntrada());
             }
         });
@@ -460,7 +461,8 @@ public class PantallaJugando extends Pantalla {
                 super.clicked(event, x, y);
                 estadoJuego=EstadoJuego.JUGANDO;
                 efectoClick.play();
-                juego.setScreen(new PantallaJugando(juego));
+                musicaFondo.play();
+                Gdx.input.setInputProcessor(new ProcesadorEntrada());
             }
         });
         this.addActor(btnReset);
