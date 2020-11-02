@@ -132,7 +132,7 @@ public class PantallaJugando extends Pantalla {
         manager.load("sounds/Salto.mp3",Sound.class);
 
         manager.finishLoading();//Espera a cargar todos los recursos
-        musicaFondo =manager.get("sounds/Gameplay.mp3");
+        musicaFondo = manager.get("sounds/Gameplay.mp3");
         musicaFondo.setVolume(0.2f);
         musicaFondo.setLooping(true);
         musicaFondo.play();
