@@ -40,8 +40,9 @@ public class PantallaJugando extends Pantalla {
     private Texture texturaRamiroMov1;
 
     //Fondos
+    private Texture texturaFondoApoyo;
+    private Texture texturaFondoBase;
     private Texture texturaFondo1;
-    private Texture texturaFondoCopy;
     private Texture texturaFondo2;
     private Texture texturaFondo3;
     private Texture texturaFondo4;
@@ -49,6 +50,7 @@ public class PantallaJugando extends Pantalla {
     //Transiciones
     //private Texture ruralUrbano;
     private boolean transicionUrbanaRural= false;
+    private int noAleatorio= 1;
 
     //Efecto sonido
     private Sound efectoClick;
@@ -60,7 +62,9 @@ public class PantallaJugando extends Pantalla {
     //Puntos  //Los puntos que gana en el marcador. MARCADOR
     private float puntos= 0;//
 
-    private float xFondo;
+    private float xFondo=0;  //Pendiente borrar
+    private float xFondoBase=0;
+    private float xFondoApoyo;
     private int cambiosFondo=0;//Cuenta las veces que se ha movido el fondo...
 
     //Estados del juego
@@ -100,6 +104,10 @@ public class PantallaJugando extends Pantalla {
         crearAudio();
         crearCorazones();
         crearEnemigos();
+
+        texturaFondoBase= texturaFondo1;
+        texturaFondoApoyo= texturaFondo2;
+        xFondoApoyo= xFondoBase + texturaFondoBase.getWidth();
 
         //Boton de pausa
         btnPausa=new Texture("pantallaJugando/botonPausa.png");
@@ -148,9 +156,6 @@ public class PantallaJugando extends Pantalla {
         texturaFondo3=new Texture("pantallaJugando/Mapas/Rural/nivelRural1_3.png");
         texturaFondo4=new Texture("pantallaJugando/Mapas/Rural/nivelRural1_4.png");
         texturaFondo5=new Texture("pantallaJugando/Mapas/Rural/nivelRural1_5.png");
-
-        texturaFondoCopy= texturaFondo1;
-
     }
 
     private void crearHUD() {//Pausa
@@ -187,8 +192,8 @@ public class PantallaJugando extends Pantalla {
         borrarPantalla(0.2f,0.2f,0.2f);
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
-        batch.draw(texturaFondo1,xFondo,0);
-        batch.draw(texturaFondoCopy,xFondo+ texturaFondo1.getWidth(),0);
+        batch.draw(texturaFondoBase,xFondoBase,0);
+        batch.draw(texturaFondoApoyo,xFondoApoyo,0);
 
         if (estadoJuego == EstadoJuego.JUGANDO){
             actualizar();
@@ -240,6 +245,28 @@ public class PantallaJugando extends Pantalla {
     private void actualizar() {
         moverFondo();
         actualizarEnemigos();
+        actualizaPuntuacion();
+    }
+
+    private void actualizaPuntuacion() { //Actualiza la puntuacion dependiendo de las veces que se han hecho cambios de fondo.
+        if(cambiosFondo <= 10){
+            puntos+= 1*0.02f;
+        }
+        if(cambiosFondo > 10 && cambiosFondo <= 20){
+            puntos+= 1*0.03f;
+        }
+        if(cambiosFondo > 20 && cambiosFondo <= 30){
+            puntos+= 1*0.04f;
+        }
+        if(cambiosFondo > 30 && cambiosFondo <= 40){
+            puntos+= 1*0.06f;
+        }
+        if(cambiosFondo > 40 && cambiosFondo <= 50){
+            puntos+= 1*0.09f;
+        }
+        if(cambiosFondo > 50) {
+            puntos += 1 * 0.5f;
+        }
     }
 
     private void actualizarEnemigos() {
@@ -258,7 +285,7 @@ public class PantallaJugando extends Pantalla {
                 cicloTimer=false;
             }
         } else {
-            if (cambiosFondo> 25 && posicionAuto + texturaCocheLujo.getWidth() < 0){
+            if (cambiosFondo< 502 && posicionAuto + texturaCocheLujo.getWidth() < 0){
                 posicionAuto = ANCHO+ 5;
                 cicloTimer=false;
             }
@@ -269,51 +296,55 @@ public class PantallaJugando extends Pantalla {
         posicionAuto -= 15;
     }
 
-    private void moverFondo() {//Mueve y cambia los fondos ademas modifica marcador dependiento de distancia
-        xFondo-=10;
-        if(xFondo==-texturaFondo1.getWidth()){
-            xFondo=0;
-            cambiosFondo++;
+    private void moverFondo() {//Mueve y cambia los fondos
+        ActualizaPosicionesFondos();
+        noAleatorio = MathUtils.random(1, 5);   // crea los numeros para cambiar los mapas de manera aleatoria
+        if (xFondo == -texturaFondoBase.getWidth()){
+            //Cambio de fondo base
+            texturaFondoBase= mapaAleatorio(noAleatorio);
         }
-        if (cambiosFondo < 5){
-            puntos += 3*0.03f;
-        }
-        if(cambiosFondo>=5){//Encargardo de cargar el fondo 2
-            texturaFondoCopy=texturaFondo2;
-            puntos += 3*0.03f;
-        }
-        if(cambiosFondo>=6){
-            texturaFondo1=texturaFondo2;
-            puntos += 3*0.03f;
-        }
-        if(cambiosFondo>=10){//Encargardo de cargar el fondo 3
-            texturaFondoCopy=texturaFondo3;
-            puntos += 3*0.04f;
-        }
-        if(cambiosFondo>=11){
-            texturaFondo1=texturaFondo3;
-            puntos += 3*0.04f;
-        }
-        if (cambiosFondo >= 15){
-            texturaFondoCopy= texturaFondo4;
-            puntos += 3*0.04f;
-        }
-        if (cambiosFondo >= 16){
-            texturaFondo1= texturaFondo4;
-            puntos += 3*0.05f;
-        }
-        if (cambiosFondo >= 19){
-            texturaFondoCopy= texturaFondo5;
-            puntos += 3*0.05f;
-        }
-        if (cambiosFondo >= 20){
-            texturaFondo1= texturaFondo5;
-            puntos += 3*0.05f;
+        if (xFondo == -(texturaFondoApoyo.getWidth()+texturaFondoBase.getWidth())){
+            //Cambio fondo de apoyo
+            texturaFondoApoyo= mapaAleatorio(noAleatorio);
         }
     }
 
+    private void ActualizaPosicionesFondos() { // Actualiza las posiciones de los fondos para hacerlos infinitos
+        xFondo-=10;             //Es el cursor de la posición
+        xFondoBase-=10;
+        xFondoApoyo-=10;
+        if (xFondo == -texturaFondoBase.getWidth()){
+            xFondoBase = xFondoApoyo+texturaFondoApoyo.getWidth();
+            cambiosFondo++;
+        }
+        if (xFondo == -(texturaFondoApoyo.getWidth()+texturaFondoBase.getWidth())) {
+            xFondoApoyo = xFondoBase+texturaFondoBase.getWidth();
+            xFondo= 0;
+            cambiosFondo++;
+        }
+    }
+
+    private Texture mapaAleatorio(int noAleatorio) { //Asigna el mapa de manera aleatoria
+        if(noAleatorio == 1){
+            return texturaFondo1;
+        }
+        if(noAleatorio == 2){
+           return texturaFondo2;
+        }
+        if(noAleatorio == 3){
+            return texturaFondo3;
+        }
+        if(noAleatorio == 4){
+            return texturaFondo4;
+        }
+        if(noAleatorio == 5){
+            return texturaFondo5;
+        }
+        return texturaFondo1;
+    }
+
     @Override
-    public void pause() {
+    public void pause(){
     }
 
     @Override
@@ -322,13 +353,8 @@ public class PantallaJugando extends Pantalla {
 
     @Override
     public void dispose() {
-        texturaFondo1.dispose();
-        texturaFondoCopy.dispose();
-        texturaFondo2.dispose();
-        texturaFondo3.dispose();
-        texturaFondo4.dispose();
-        texturaFondo5.dispose();
-
+        texturaFondoApoyo.dispose();
+        texturaFondoBase.dispose();
     }
 
     private class ProcesadorEntrada implements InputProcessor {
@@ -462,6 +488,7 @@ public class PantallaJugando extends Pantalla {
                 estadoJuego=EstadoJuego.JUGANDO;
                 efectoClick.play();
                 musicaFondo.play();
+                ///////////////////Implementar reinicio de variables en caso de ser necesario. ////////////////////////
                 Gdx.input.setInputProcessor(new ProcesadorEntrada());
             }
         });
