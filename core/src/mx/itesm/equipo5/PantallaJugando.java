@@ -97,7 +97,7 @@ public class PantallaJugando extends Pantalla {
 
     @Override
     public void show() {
-        crearHUD();
+        crearHUDpausa();
         crearFondos();
         crearRamiro();
         crearTexto();
@@ -158,27 +158,11 @@ public class PantallaJugando extends Pantalla {
         texturaFondo5=new Texture("pantallaJugando/Mapas/Rural/nivelRural1_5.png");
     }
 
-    private void crearHUD() {//Pausa
+    private void crearHUDpausa() {//Pausa
         camaraHUD = new OrthographicCamera(ANCHO, ALTO);
         camaraHUD.position.set(ANCHO/2, ALTO/2, 0);
         camaraHUD.update();
         vistaHUD = new StretchViewport(ANCHO, ALTO, camaraHUD);
-
-        //Escena
-        //escenaHUD = new Stage(vistaHUD);
-
-        //Boton Pausa
-        /*
-        btnPausa= new Texture("pantallaJugando/botonPausa.png");
-        TextureRegionDrawable regionBtnPausa= new TextureRegionDrawable(new TextureRegion(btnPausa));
-
-        ImageButton btnPausa= new ImageButton(regionBtnPausa);
-        btnPausa.setPosition(ANCHO*0.87f, ALTO*.78f);
-
-        escenaHUD.addActor(btnPausa);
-        */
-
-
     }
 
     private void crearRamiro() {
@@ -205,10 +189,6 @@ public class PantallaJugando extends Pantalla {
         }
 
         batch.end();
-
-        //HUD
-        // batch.setProjectionMatrix(camaraHUD.combined);
-        //escenaHUD.draw();
 
         if (estadoJuego == EstadoJuego.PAUSADO) {   //Implementar la pausa
 
@@ -324,7 +304,7 @@ public class PantallaJugando extends Pantalla {
         }
     }
 
-    private Texture mapaAleatorio(int noAleatorio) { //Asigna el mapa de manera aleatoria
+    private Texture mapaAleatorio(int noAleatorio) { //Asigna el mapa conforme el numero de entrada.
         if(noAleatorio == 1){
             return texturaFondo1;
         }
