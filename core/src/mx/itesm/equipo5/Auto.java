@@ -6,19 +6,15 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 
 
 public class Auto extends Objeto {
-    private Texture texturaAuto;
+
 
     public Auto (Texture textura, float x, float y){
-        texturaAuto= textura;
-        sprite.setPosition(x,y);
+    super(textura, x, y);
     }
 
-    public void moverseIzquierda(){
-        sprite.setX(sprite.getX()-15);
+    public void moverIzquierda(){
+        sprite.setX(sprite.getX()-20);
     }
 
-    @Override
-    public void render(SpriteBatch batch) {
-        batch.draw(texturaAuto, sprite.getX(), sprite.getY());
-    }
+
 }

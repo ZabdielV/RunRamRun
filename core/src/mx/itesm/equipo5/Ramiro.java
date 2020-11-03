@@ -27,13 +27,16 @@ public class Ramiro extends Objeto{
 
     public Ramiro(Texture textura, float x, float y){
         TextureRegion region=new TextureRegion(textura);//La textura es toda la imagen, la region divide la imagen en frames
-        texturasFrames=region.split(155,290);//Una matriz de regiones, seleccion de uan region...
+        texturasFrames=region.split(153,290);//Una matriz de regiones, seleccion de uan region...
 
-        sprite=new Sprite(texturasFrames[0][4]);//Salto
+        sprite=new Sprite(texturasFrames[0][6]);//Salto
         sprite.setPosition(x, y);
 
 
-        TextureRegion[] arrFrames= {texturasFrames[0][4],texturasFrames[0][3],texturasFrames[0][2],texturasFrames[0][1]};
+        //TextureRegion[] arrFrames= {texturasFrames[0][4],texturasFrames[0][3],texturasFrames[0][2],texturasFrames[0][1]};
+        TextureRegion[] arrFrames= {texturasFrames[0][10],texturasFrames[0][9],texturasFrames[0][8],texturasFrames[0][7],
+                texturasFrames[0][6],texturasFrames[0][5],texturasFrames[0][4],texturasFrames[0][3],texturasFrames[0][2]
+        };
         animacion=new Animation<TextureRegion>(0.1f,arrFrames);//10 cuadros por segundo por que cada uno dura 0.1f
         animacion.setPlayMode(Animation.PlayMode.LOOP);
         timerAnimacion=0;
