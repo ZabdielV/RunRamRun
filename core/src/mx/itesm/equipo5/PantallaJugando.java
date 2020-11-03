@@ -88,7 +88,7 @@ public class PantallaJugando extends Pantalla {
     private Texture texturaCarrito;
 
     private float timerCreacionEnemigo;
-    private final float TIEMPO_CREACION_ENEMIGO = 30;
+    private final float TIEMPO_CREACION_ENEMIGO = 15;
     private boolean cicloTimer= true;
 
     public PantallaJugando(Juego juego){
