@@ -41,13 +41,22 @@ public class PantallaJugando extends Pantalla {
     private Texture texturaRamiroMov1;
 
     //Fondos
+    private Texture texturaFondo1_1;
+    private Texture texturaFondo1_2;
+    private Texture texturaFondo1_3;
+    private Texture texturaFondo1_4;
+    private Texture texturaFondo1_5;
+
+    private Texture texturaFondo2_1;
+    private Texture texturaFondo2_2;
+    private Texture texturaFondo2_3;
+    private Texture texturaFondo2_4;
+    private Texture texturaFondo2_5;
+
     private Texture texturaFondoApoyo;
     private Texture texturaFondoBase;
-    private Texture texturaFondo1;
-    private Texture texturaFondo2;
-    private Texture texturaFondo3;
-    private Texture texturaFondo4;
-    private Texture texturaFondo5;
+    private boolean modificacionFondoBase =false;
+
     //Transiciones
     //private Texture ruralUrbano;
     private boolean transicionUrbanaRural= false;
@@ -68,12 +77,12 @@ public class PantallaJugando extends Pantalla {
     private float puntos= 0;//
     private float xFondo=0;  //Pendiente borrar
     private float xFondoBase=0;
-    private float xFondoApoyo;
+    private float xFondoApoyo=3200;
     private int cambiosFondo=0;//Cuenta las veces que se ha movido el fondo...
 
     //Estados del juego
     private EstadoJuego estadoJuego = EstadoJuego.JUGANDO;
-    private EstadoMapa estadoMapa=EstadoMapa.RURAL;
+    private EstadoMapa estadoMapa;
     //Pausa
     private EscenaPausa escenaPausa;
     private EscenaMuerte escenaMuerte;
@@ -101,6 +110,13 @@ public class PantallaJugando extends Pantalla {
     private Array<Camioneta> arrEnemigosCamioneta;
     private Camioneta camioneta;
     private Texture texturaCamioneta;
+
+    private Array<AutoGolf> arrEnemigosCarritoGolf;
+    private AutoGolf carritoGolf;
+    private Texture texturaCarritoGolf;
+
+    private Array<Auto> arrEnemigosAuto;
+    private Auto carroLujo;
     private Texture texturaCocheLujo;
 
 
@@ -132,9 +148,6 @@ public class PantallaJugando extends Pantalla {
         crearEnemigos();
         crearItemCorazon();
 
-        texturaFondoBase= texturaFondo1;
-        texturaFondoApoyo= texturaFondo2;
-        xFondoApoyo= xFondoBase + texturaFondoBase.getWidth();
 
         //Boton de pausa
         btnPausa=new Texture("pantallaJugando/botonPausa.png");
@@ -148,12 +161,15 @@ public class PantallaJugando extends Pantalla {
     }
 
     private void crearEnemigos() {
-            //Inicializa texturas
-            texturaCamioneta = new Texture("pantallaJugando/Enemigos/camioneta.png");
-            texturaCocheLujo = new Texture("pantallaJugando/Enemigos/carro.png");
+        //Inicializa texturas
+        texturaCamioneta = new Texture("pantallaJugando/Enemigos/camioneta.png");
+        texturaCocheLujo = new Texture("pantallaJugando/Enemigos/carro.png");
         //texturaCarrito = new Texture("pantallaJugando/Enemigos/camioneta.png"); Cuando se implemente escuela
+
             //Inicializa areglos
         arrEnemigosCamioneta=new Array<>();
+        arrEnemigosAuto= new Array<>();
+        arrEnemigosCarritoGolf= new Array<>();
 
 
     }
@@ -179,7 +195,7 @@ public class PantallaJugando extends Pantalla {
         manager.finishLoading();//Espera a cargar todos los recursos
         //Musica
         musicaFondo = manager.get("sounds/Gameplay.mp3");
-        musicaFondo.setVolume(0.2f);
+        musicaFondo.setVolume(0.08f);
         musicaFondo.setLooping(true);
         musicaFondo.play();
         //Efectos
@@ -187,7 +203,7 @@ public class PantallaJugando extends Pantalla {
         efetoSalto=manager.get("sounds/Salto.mp3");
         efectoDamage=manager.get("sounds/Muerte.mp3");
         efectoGameOver=manager.get("sounds/gameOver.mp3");
-        efectoGameOver.setVolume(1,0.1f);
+        efectoGameOver.setVolume(1,0.05f);
         efectoItem=manager.get("sounds/Coin2.mp3");
 
     }
@@ -197,11 +213,22 @@ public class PantallaJugando extends Pantalla {
     }
 
     private void crearFondos() {
-        texturaFondo1 =new Texture("pantallaJugando/Mapas/Rural/nivelRural1_1.png");
-        texturaFondo2=new Texture("pantallaJugando/Mapas/Rural/nivelRural1_2.png");
-        texturaFondo3=new Texture("pantallaJugando/Mapas/Rural/nivelRural1_3.png");
-        texturaFondo4=new Texture("pantallaJugando/Mapas/Rural/nivelRural1_4.png");
-        texturaFondo5=new Texture("pantallaJugando/Mapas/Rural/nivelRural1_5.png");
+        //Mapas Rural
+        texturaFondo1_1 =new Texture("pantallaJugando/Mapas/Rural/nivelRural1_1.png");
+        texturaFondo1_2 =new Texture("pantallaJugando/Mapas/Rural/nivelRural1_2.png");
+        texturaFondo1_3=new Texture("pantallaJugando/Mapas/Rural/nivelRural1_3.png");
+        texturaFondo1_4 =new Texture("pantallaJugando/Mapas/Rural/nivelRural1_4.png");
+        texturaFondo1_5 =new Texture("pantallaJugando/Mapas/Rural/nivelRural1_5.png");
+        //Mapas Urbano
+        texturaFondo2_1=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_1.png");
+        texturaFondo2_2=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_2.png");
+        texturaFondo2_3=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_3.png");
+        texturaFondo2_4=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_4.png");
+        texturaFondo2_5=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_5.png");
+
+        //texturaFondoBase= texturaFondo1_1;
+        //texturaFondoApoyo= texturaFondo1_2;
+        //xFondoApoyo= xFondoBase + texturaFondoBase.getWidth();
     }
 
     private void crearHUDpausa() {//Pausa
@@ -220,17 +247,21 @@ public class PantallaJugando extends Pantalla {
     public void render(float delta) {
 
         borrarPantalla(0.2f,0.2f,0.2f);
+
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
+        actualizarFondo();
         batch.draw(texturaFondoBase,xFondoBase,0);
         batch.draw(texturaFondoApoyo,xFondoApoyo,0);
 
         if (estadoJuego == EstadoJuego.JUGANDO){
-            actualizar();
-            dibujarTexto();
-            dibujarCorazones();
+
+            actualizarEnemigosItems();
+
             dibujarEnemigos();
             dibujarItems();
+            dibujarTexto();
+            dibujarCorazones();
             ramiro.render(batch);
             batch.draw(btnPausa,ANCHO-100-btnPausa.getWidth()*0.5f,ALTO-100-btnPausa.getHeight()*0.5f);
         }
@@ -258,6 +289,7 @@ public class PantallaJugando extends Pantalla {
         }
 
     }
+
 
     private void dibujarItems() {
         dibujarArregloCorazones();
@@ -289,17 +321,65 @@ public class PantallaJugando extends Pantalla {
         if(estadoMapa==EstadoMapa.RURAL){//El vehiculo es el unico que cambio por escenario
             dibujarArregloCamionetas();
         }
+        if(estadoMapa==EstadoMapa.URBANO){//El vehiculo es el unico que cambio por escenario
+            dibujarArregloCoche();
+        }
+        if(estadoMapa==EstadoMapa.UNIVERSIDAD){//El vehiculo es el unico que cambio por escenario
+            dibujarArregloCarritos();
+        }
 
         /*
         IMPLEMENTAR
-         */
-    //dibujarAuto();
-        //dibujarCarroGolf();
+
         //dibujarPajaro();
         //dibujarTarea();
+
+         */
     }
 
-    private void dibujarArregloCamionetas() {//Crea los enemigos dependiendo un tiempo aleatorio....,Tambien los desaparece si estan fuera de pantalla
+    private void dibujarArregloCarritos() {
+        timerCrearEnemigo += Gdx.graphics.getDeltaTime();
+        if (timerCrearEnemigo>=TIEMPO_CREA_ENEMIGO) {
+            timerCrearEnemigo = 0;
+            TIEMPO_CREA_ENEMIGO = tiempoBase + MathUtils.random()*2;
+            if (tiempoBase>0) {
+                tiempoBase -= 0.01f;
+            }
+            carritoGolf = new AutoGolf(texturaCarritoGolf,ANCHO,60f);
+            arrEnemigosCarritoGolf.add(carritoGolf);
+        }
+
+        //Si el vehiculo se paso de la pantalla, lo borra
+        for (int i = arrEnemigosCarritoGolf.size-1; i >= 0; i--) {
+            AutoGolf carroGolf = arrEnemigosCarritoGolf.get(i);
+            if (carroGolf.sprite.getX() < 0- carroGolf.sprite.getWidth()) {
+                arrEnemigosCarritoGolf.removeIndex(i);
+
+            }
+        }
+    }
+    private void dibujarArregloCoche() {
+        timerCrearEnemigo += Gdx.graphics.getDeltaTime();
+        if (timerCrearEnemigo>=TIEMPO_CREA_ENEMIGO) {
+            timerCrearEnemigo = 0;
+            TIEMPO_CREA_ENEMIGO = tiempoBase + MathUtils.random()*2;
+            if (tiempoBase>0) {
+                tiempoBase -= 0.01f;
+            }
+            carroLujo= new Auto(texturaCocheLujo,ANCHO,60f);
+            arrEnemigosAuto.add(carroLujo);
+        }
+
+        //Si el vehiculo se paso de la pantalla, lo borra
+        for (int i = arrEnemigosAuto.size-1; i >= 0; i--) {
+            Auto carroLujo1 = arrEnemigosAuto.get(i);
+            if (carroLujo1.sprite.getX() < 0- carroLujo1.sprite.getWidth()) {
+                arrEnemigosAuto.removeIndex(i);
+
+            }
+        }
+    }
+    private void dibujarArregloCamionetas() {//Crea los enemigos dependiendo un tiempo aleatorio....Tambien los desaparece si estan fuera de pantalla
 
         timerCrearEnemigo += Gdx.graphics.getDeltaTime();
         if (timerCrearEnemigo>=TIEMPO_CREA_ENEMIGO) {
@@ -335,24 +415,28 @@ public class PantallaJugando extends Pantalla {
     }
 
 
-    private void actualizar() {
-        moverFondo();
-        //actualizarEnemigos();
-        actualizaPuntuacion();
-
-        if(estadoMapa==EstadoMapa.RURAL){
-            moverCamionetas();
+    private void actualizarFondo() {
+        actualizaEstadoMapa();
+        if (modificacionFondoBase == true && estadoJuego != EstadoJuego.PAUSADO && estadoJuego != EstadoJuego.PIERDE){
+            moverFondo();
+        } else if (modificacionFondoBase == false && estadoJuego != EstadoJuego.PAUSADO && estadoJuego != EstadoJuego.PIERDE ){
+            texturaFondoBase= texturaFondo1_1;
+            texturaFondoApoyo= texturaFondo1_2;
+            moverFondo();
         }
-        /*
-        IMPLEMENTAR
-         */
-            //moverPajaro();
-        //moverAuto();
-        //moverCarroGolf();
-        //etc
-        moverItemCorazon();
-        verificarColisiones();
-        verificarMuerte();
+    }
+
+    private void actualizaEstadoMapa() {
+        if(cambiosFondo >= 0 && cambiosFondo < 10){
+            estadoMapa= EstadoMapa.RURAL;
+        }
+        if(cambiosFondo >= 10){
+            estadoMapa= EstadoMapa.URBANO;
+        }
+        /*if(cambiosFondo >= 60){
+            estadoMapa= EstadoMapa.UNIVERSIDAD;
+        }*/
+
     }
 
     private void moverItemCorazon() {
@@ -434,7 +518,49 @@ Encargado de verificar cualquier colision
 
                 // Gdx.app.log("Width","width"+vehiculo.sprite.getBoundingRectangle().width);
                 if(ramiro.sprite.getBoundingRectangle().overlaps(camioneta.sprite.getBoundingRectangle())){//Colision de camioneta
-                    //Ramiro se vulve inmune 0.6 seg
+                    //Ramiro se vuelve inmune 0.6 seg
+
+                    if(inmunidad!=true){//Si no ha tomado damage, entoces se vuelve inmune, asi se evita bugs.
+                        if(vidas>0){//Mientras te queden vidas en el arreglo
+                            quitarCorazones();//Se resta una vida
+                        }
+                        inmunidad=true;
+                    }
+
+                }
+
+            }
+        }
+
+        //Verifica colisiones de carro de Lujo
+        if(estadoMapa==EstadoMapa.URBANO){
+            for (int i=arrEnemigosAuto.size-1; i>=0; i--) {
+                Auto cocheLujo = arrEnemigosAuto.get(i);
+
+                // Gdx.app.log("Width","width"+vehiculo.sprite.getBoundingRectangle().width);
+                if(ramiro.sprite.getBoundingRectangle().overlaps(cocheLujo.sprite.getBoundingRectangle())){//Colision de camioneta
+                    //Ramiro se vuelve inmune 0.6 seg
+
+                    if(inmunidad!=true){//Si no ha tomado damage, entoces se vuelve inmune, asi se evita bugs.
+                        if(vidas>0){//Mientras te queden vidas en el arreglo
+                            quitarCorazones();//Se resta una vida
+                        }
+                        inmunidad=true;
+                    }
+
+                }
+
+            }
+        }
+
+        //Verifica colisiones de carrito de golf
+        if(estadoMapa==EstadoMapa.UNIVERSIDAD){
+            for (int i=arrEnemigosCarritoGolf.size-1; i>=0; i--) {
+                AutoGolf carritoGolf = arrEnemigosCarritoGolf.get(i);
+
+                // Gdx.app.log("Width","width"+vehiculo.sprite.getBoundingRectangle().width);
+                if(ramiro.sprite.getBoundingRectangle().overlaps(carritoGolf.sprite.getBoundingRectangle())){//Colision de camioneta
+                    //Ramiro se vuelve inmune 0.6 seg
 
                     if(inmunidad!=true){//Si no ha tomado damage, entoces se vuelve inmune, asi se evita bugs.
                         if(vidas>0){//Mientras te queden vidas en el arreglo
@@ -451,13 +577,25 @@ Encargado de verificar cualquier colision
 
     }
 
-
-
     private void moverCamionetas() {//Encargado de dibujar y mover las camionetas
         for (Camioneta cam : arrEnemigosCamioneta) {
             cam.render(batch);
 
             cam.moverIzquierda();
+        }
+    }
+    private void moverCarroLujo() {//Encargado de dibujar y mover las camionetas
+        for (Auto auto : arrEnemigosAuto) {
+            auto.render(batch);
+
+            auto.moverIzquierda();
+        }
+    }
+    private void moverCarritoGolf() {//Encargado de dibujar y mover las camionetas
+        for (AutoGolf carrito : arrEnemigosCarritoGolf) {
+            carrito.render(batch);
+
+            carrito.moverIzquierda();
         }
     }
 
@@ -481,44 +619,42 @@ Encargado de verificar cualquier colision
             puntos += 1 * 0.5f;
         }
     }
-    /*
-        private void actualizarEnemigos() {
-            if (cicloTimer == true){
-                actualizarPosicionAuto();
-            }
-            timerCreacionEnemigo+= Gdx.graphics.getDeltaTime();
-            if (timerCreacionEnemigo >= TIEMPO_CREACION_ENEMIGO){
-                timerCreacionEnemigo = 0;
-                posicionAuto = ANCHO;
-                cicloTimer = true;
-            }
-            if (cambiosFondo <25 && transicionUrbanaRural == false){
-                if (posicionAuto + texturaCamioneta.getWidth() < 0){
-                    posicionAuto = ANCHO+ 5;
-                    cicloTimer=false;
-                }
-            } else {
-                if (cambiosFondo< 502 && posicionAuto + texturaCocheLujo.getWidth() < 0){
-                    posicionAuto = ANCHO+ 5;
-                    cicloTimer=false;
-                }
-            }
-        }
 
-        private void actualizarPosicionAuto() {
-            posicionAuto -= 15;
+    private void actualizarEnemigosItems() {
+        if(estadoMapa== EstadoMapa.RURAL){
+            moverCamionetas();
         }
-    */
+        if(estadoMapa== EstadoMapa.URBANO){
+            moverCarroLujo();
+        }
+        if(estadoMapa== EstadoMapa.UNIVERSIDAD){
+            moverCarritoGolf();
+        }
+        actualizaPuntuacion();
+        moverItemCorazon();
+        verificarColisiones();
+        verificarMuerte();
+         /*
+        IMPLEMENTAR
+
+        //moverPajaro();
+        //etc
+        */
+    }
+
     private void moverFondo() {//Mueve y cambia los fondos
         ActualizaPosicionesFondos();
         noAleatorio = MathUtils.random(1, 5);   // crea los numeros para cambiar los mapas de manera aleatoria
         if (xFondo == -texturaFondoBase.getWidth()){
             //Cambio de fondo base
             texturaFondoBase= mapaAleatorio(noAleatorio);
+            modificacionFondoBase= true;
         }
         if (xFondo == -(texturaFondoApoyo.getWidth()+texturaFondoBase.getWidth())){
             //Cambio fondo de apoyo
             texturaFondoApoyo= mapaAleatorio(noAleatorio);
+            xFondo= 0;
+            modificacionFondoBase= true;
         }
     }
 
@@ -532,28 +668,46 @@ Encargado de verificar cualquier colision
         }
         if (xFondo == -(texturaFondoApoyo.getWidth()+texturaFondoBase.getWidth())) {
             xFondoApoyo = xFondoBase+texturaFondoBase.getWidth();
-            xFondo= 0;
             cambiosFondo++;
         }
     }
 
     private Texture mapaAleatorio(int noAleatorio) { //Asigna el mapa conforme el numero de entrada.
-        if(noAleatorio == 1){
-            return texturaFondo1;
+        if (estadoMapa == EstadoMapa.RURAL){
+            if(noAleatorio == 1){
+                return texturaFondo1_1;
+            }
+            if(noAleatorio == 2){
+                return texturaFondo1_2;
+            }
+            if(noAleatorio == 3){
+                return texturaFondo1_3;
+            }
+            if(noAleatorio == 4){
+                return texturaFondo1_4;
+            }
+            if(noAleatorio == 5){
+                return texturaFondo1_5;
+            }
+        } else
+        if (estadoMapa == EstadoMapa.URBANO) {
+            if(noAleatorio == 1){
+                return texturaFondo2_1;
+            }
+            if(noAleatorio == 2){
+                return texturaFondo2_2;
+            }
+            if(noAleatorio == 3){
+                return texturaFondo2_3;
+            }
+            if(noAleatorio == 4){
+                return texturaFondo2_4;
+            }
+            if(noAleatorio == 5){
+                return texturaFondo2_5;
+            }
         }
-        if(noAleatorio == 2){
-           return texturaFondo2;
-        }
-        if(noAleatorio == 3){
-            return texturaFondo3;
-        }
-        if(noAleatorio == 4){
-            return texturaFondo4;
-        }
-        if(noAleatorio == 5){
-            return texturaFondo5;
-        }
-        return texturaFondo1;
+        return null;
     }
 
     @Override
@@ -648,8 +802,6 @@ Encargado de verificar cualquier colision
         }
     }
 
-
-
     private class EscenaPausa extends Stage{
         //Titulo de Pausa
         Texture pausa;
@@ -726,8 +878,6 @@ Encargado de verificar cualquier colision
 
     }
 
-
-
     private class EscenaMuerte extends Stage{
         //Titulo de GameOver
         Texture GameOver;
@@ -795,7 +945,6 @@ Encargado de verificar cualquier colision
         JUGANDO,
         PAUSADO,
         PIERDE,
-        GANA,
         REINICIO
     }
     private enum EstadoMapa {
