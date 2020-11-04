@@ -55,12 +55,12 @@ public class PantallaJugando extends Pantalla {
 
     private Texture texturaFondoApoyo;
     private Texture texturaFondoBase;
-    private boolean modificacionFondoBase =false;
+    private boolean modificacionFondoBase =false;  //Contiene el significado si ya se modifico los fondos base.
 
     //Transiciones
     //private Texture ruralUrbano;
-    private boolean transicionUrbanaRural= false;
-    private int noAleatorio= 1;
+    private boolean transicionUrbanaRural= false;  //checa si la transicion se realizo.
+    private int noAleatorio= 1; //Ayuda a asignar los mapas aleatorios, este es el default.
 
     //Efecto sonido
     private Sound efectoClick;
@@ -77,7 +77,7 @@ public class PantallaJugando extends Pantalla {
     private float puntos= 0;//
     private float xFondo=0;  //Pendiente borrar
     private float xFondoBase=0;
-    private float xFondoApoyo=3200;
+    private float xFondoApoyo=3200; //Es el ancho de los fondos
     private int cambiosFondo=0;//Cuenta las veces que se ha movido el fondo...
 
     //Estados del juego
@@ -225,10 +225,6 @@ public class PantallaJugando extends Pantalla {
         texturaFondo2_3=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_3.png");
         texturaFondo2_4=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_4.png");
         texturaFondo2_5=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_5.png");
-
-        //texturaFondoBase= texturaFondo1_1;
-        //texturaFondoApoyo= texturaFondo1_2;
-        //xFondoApoyo= xFondoBase + texturaFondoBase.getWidth();
     }
 
     private void crearHUDpausa() {//Pausa
@@ -289,7 +285,6 @@ public class PantallaJugando extends Pantalla {
         }
 
     }
-
 
     private void dibujarItems() {
         dibujarArregloCorazones();
@@ -415,7 +410,7 @@ public class PantallaJugando extends Pantalla {
     }
 
 
-    private void actualizarFondo() {
+    private void actualizarFondo() {  //Asigna los fondos base y los modifica al recorrerlos.
         actualizaEstadoMapa();
         if (modificacionFondoBase == true && estadoJuego != EstadoJuego.PAUSADO && estadoJuego != EstadoJuego.PIERDE){
             moverFondo();
@@ -426,7 +421,7 @@ public class PantallaJugando extends Pantalla {
         }
     }
 
-    private void actualizaEstadoMapa() {
+    private void actualizaEstadoMapa() {  //establece el area en que el jugador esta.
         if(cambiosFondo >= 0 && cambiosFondo < 10){
             estadoMapa= EstadoMapa.RURAL;
         }
@@ -620,7 +615,7 @@ Encargado de verificar cualquier colision
         }
     }
 
-    private void actualizarEnemigosItems() {
+    private void actualizarEnemigosItems() {  //mueve los enemigos e items, por lo mismo verifica si hay colision.
         if(estadoMapa== EstadoMapa.RURAL){
             moverCamionetas();
         }
@@ -648,13 +643,13 @@ Encargado de verificar cualquier colision
         if (xFondo == -texturaFondoBase.getWidth()){
             //Cambio de fondo base
             texturaFondoBase= mapaAleatorio(noAleatorio);
-            modificacionFondoBase= true;
+            modificacionFondoBase= true;  //Avisa que ya se modifico los fondos de inicio.
         }
         if (xFondo == -(texturaFondoApoyo.getWidth()+texturaFondoBase.getWidth())){
             //Cambio fondo de apoyo
             texturaFondoApoyo= mapaAleatorio(noAleatorio);
-            xFondo= 0;
-            modificacionFondoBase= true;
+            xFondo= 0; //al pasar el segundo fondo regresa el puntero al primer fondo.
+            modificacionFondoBase= true;  //Avisa que ya se modifico los fondos de inicio.
         }
     }
 
