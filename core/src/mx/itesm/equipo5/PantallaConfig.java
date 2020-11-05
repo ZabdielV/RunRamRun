@@ -1,6 +1,7 @@
 package mx.itesm.equipo5;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -22,7 +23,8 @@ public class PantallaConfig extends Pantalla{
     private Stage escenaMenu;//Contenedor de objetos (Botones)
 
     private Texture texturaFondo,titulo;
-
+    private Preferences prefs;
+    private boolean musicPreference;
 
 
     //Efecto Sonido
@@ -40,6 +42,12 @@ public class PantallaConfig extends Pantalla{
         //titulo=new Texture("titulo.png");
         crearMenu();
         crearAudio();
+
+        /*Cargar preferencias*/
+        prefs=Gdx.app.getPreferences("music");
+        musicPreference=prefs.getBoolean("music",true);
+
+
     }
 
     private void crearAudio() {
@@ -78,9 +86,17 @@ public class PantallaConfig extends Pantalla{
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
+
                 efectoClick.play();
-                //Cambiamos de pantalla (el objeto juego, setScreen)
-                //juego.setScreen(new PantallaMenu(juego));
+                if(musicPreference){
+                    prefs.putBoolean("music",false);
+                    musicPreference=false;
+                }
+                else {
+                    prefs.putBoolean("music",true);
+                    musicPreference=true;
+                }
+                prefs.flush();
             }
         });
 

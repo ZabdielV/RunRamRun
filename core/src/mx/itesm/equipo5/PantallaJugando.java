@@ -2,6 +2,7 @@ package mx.itesm.equipo5;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -39,7 +40,8 @@ public class PantallaJugando extends Pantalla {
     //Personaje Ramiro
     private mx.itesm.equipo5.Ramiro ramiro;
     private Texture texturaRamiroMov1;
-
+    //Preferencias
+    private boolean music;
     //Fondos
     private Texture texturaFondo1_1;
     private Texture texturaFondo1_2;
@@ -154,7 +156,13 @@ public class PantallaJugando extends Pantalla {
 
         Gdx.input.setInputProcessor(new ProcesadorEntrada());
     }
+    private void cargarPreferencias() {
+        //Preferencia musica
+        Preferences musicPre=Gdx.app.getPreferences("music");
+        music=musicPre.getBoolean("music",true);
+        Gdx.app.log("prefe","preferencias al inicio: "+music);
 
+    }
     private void crearItemCorazon() {
         texturaItemCorazon =new Texture("pantallaJugando/corazon.png");
         arrCorazonesItem=new Array<>();
@@ -194,10 +202,21 @@ public class PantallaJugando extends Pantalla {
 
         manager.finishLoading();//Espera a cargar todos los recursos
         //Musica
+        //Carga las preferencias
+        cargarPreferencias();
+
+
         musicaFondo = manager.get("sounds/Gameplay.mp3");
         musicaFondo.setVolume(0.08f);
         musicaFondo.setLooping(true);
-        musicaFondo.play();
+        if(music){
+            musicaFondo.play();
+
+        }
+
+
+
+
         //Efectos
         efectoClick=manager.get("sounds/Click.mp3");
         efetoSalto=manager.get("sounds/Salto.mp3");
@@ -454,7 +473,9 @@ public class PantallaJugando extends Pantalla {
                 }
                 Gdx.input.setInputProcessor(escenaMuerte);
                 efectoGameOver.play();
-                musicaFondo.pause();
+                if(music){
+                    musicaFondo.pause();
+                }
             }
         }
     }
@@ -757,7 +778,9 @@ Encargado de verificar cualquier colision
                     }
                     Gdx.input.setInputProcessor(escenaPausa);
                     efectoClick.play();
-                    musicaFondo.pause();
+                    if(music){
+                        musicaFondo.pause();
+                    }
                 }
 
                // juego.setScreen(new PantallaPausa(juego));
@@ -829,7 +852,9 @@ Encargado de verificar cualquier colision
                 super.clicked(event, x, y);
                 estadoJuego=EstadoJuego.JUGANDO;
                 efectoClick.play();
-                musicaFondo.play();
+                if(music){
+                    musicaFondo.play();
+                }
                 Gdx.input.setInputProcessor(new ProcesadorEntrada());
             }
         });
