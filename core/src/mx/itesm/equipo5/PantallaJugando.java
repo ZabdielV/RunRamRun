@@ -40,8 +40,10 @@ public class PantallaJugando extends Pantalla {
     //Personaje Ramiro
     private mx.itesm.equipo5.Ramiro ramiro;
     private Texture texturaRamiroMov1;
+
     //Preferencias
     private boolean music;
+
     //Fondos
     private Texture texturaFondo1_1;
     private Texture texturaFondo1_2;
@@ -70,8 +72,10 @@ public class PantallaJugando extends Pantalla {
     private Sound efectoDamage;
     private Sound efectoGameOver;
     private Sound efectoItem;
+
     // Musica
     private Music musicaFondo;
+
     //Texto
     private Texto texto;
 
@@ -85,14 +89,19 @@ public class PantallaJugando extends Pantalla {
     //Estados del juego
     private EstadoJuego estadoJuego = EstadoJuego.JUGANDO;
     private EstadoMapa estadoMapa;
+
+
     //Pausa
     private EscenaPausa escenaPausa;
     private EscenaMuerte escenaMuerte;
+
 
     //HUD
     private Stage escenaHUD;
     private OrthographicCamera camaraHUD;
     private Viewport vistaHUD;
+
+
     /*
     IMPORTANTE :Crear array por cada item...
      */
@@ -104,6 +113,7 @@ public class PantallaJugando extends Pantalla {
     //Sirve para tomar items correctamente
     private float tiempoInmunidadItem=0f;
     private boolean inmunidadItem=false;
+
 
     //Enemigos
     /*
@@ -125,6 +135,7 @@ public class PantallaJugando extends Pantalla {
     //Sirve para quitar vidas correctamente, solo cuando tomas damage
     private float tiempoInmunidad=0f;//Eres inmune un tiempo si tomas damage
     private boolean inmunidad=false;
+
 
     //Cada cuanto timepo aparece un enemigo: Frecuencia
     private float timerCrearEnemigo;
@@ -150,10 +161,8 @@ public class PantallaJugando extends Pantalla {
         crearEnemigos();
         crearItemCorazon();
 
-
         //Boton de pausa
         btnPausa=new Texture("pantallaJugando/botonPausa.png");
-
         Gdx.input.setInputProcessor(new ProcesadorEntrada());
     }
     private void cargarPreferencias() {
@@ -172,14 +181,12 @@ public class PantallaJugando extends Pantalla {
         //Inicializa texturas
         texturaCamioneta = new Texture("pantallaJugando/Enemigos/camioneta.png");
         texturaCocheLujo = new Texture("pantallaJugando/Enemigos/carro.png");
-        //texturaCarrito = new Texture("pantallaJugando/Enemigos/camioneta.png"); Cuando se implemente escuela
+        texturaCarritoGolf = new Texture("pantallaJugando/Enemigos/camioneta.png");
 
             //Inicializa areglos
         arrEnemigosCamioneta=new Array<>();
         arrEnemigosAuto= new Array<>();
         arrEnemigosCarritoGolf= new Array<>();
-
-
     }
 
     private void crearCorazones() {
@@ -201,11 +208,10 @@ public class PantallaJugando extends Pantalla {
         manager.load("sounds/Coin2.mp3",Sound.class);
 
         manager.finishLoading();//Espera a cargar todos los recursos
-        //Musica
         //Carga las preferencias
         cargarPreferencias();
 
-
+        //Musica
         musicaFondo = manager.get("sounds/Gameplay.mp3");
         musicaFondo.setVolume(0.08f);
         musicaFondo.setLooping(true);
@@ -213,9 +219,6 @@ public class PantallaJugando extends Pantalla {
             musicaFondo.play();
 
         }
-
-
-
 
         //Efectos
         efectoClick=manager.get("sounds/Click.mp3");
@@ -244,6 +247,8 @@ public class PantallaJugando extends Pantalla {
         texturaFondo2_3=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_3.png");
         texturaFondo2_4=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_4.png");
         texturaFondo2_5=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_5.png");
+        //Mapas Universidad
+
     }
 
     private void crearHUDpausa() {//Pausa
@@ -253,7 +258,7 @@ public class PantallaJugando extends Pantalla {
         vistaHUD = new StretchViewport(ANCHO, ALTO, camaraHUD);
     }
 
-    private void crearRamiro() {
+    private void crearRamiro() {                //Mejorar Ramiro
         texturaRamiroMov1= new Texture("pantallaJugando/personaje1/movRamiro2.png");//Sprite de movimientos
         ramiro=new Ramiro(texturaRamiroMov1,150,50);
     }
@@ -265,13 +270,13 @@ public class PantallaJugando extends Pantalla {
 
         batch.setProjectionMatrix(camara.combined);
         batch.begin();
-        actualizarFondo();
+        actualizarFondo();                                  //Actualiza solo cosas de Fondo
         batch.draw(texturaFondoBase,xFondoBase,0);
         batch.draw(texturaFondoApoyo,xFondoApoyo,0);
 
         if (estadoJuego == EstadoJuego.JUGANDO){
 
-            actualizarEnemigosItems();
+            actualizarEnemigosItems();                      //Actualiza solo items y enemigos
 
             dibujarEnemigos();
             dibujarItems();
@@ -283,7 +288,7 @@ public class PantallaJugando extends Pantalla {
 
         batch.end();
 
-        if (estadoJuego == EstadoJuego.PAUSADO) {   //Implementar la pausa
+        if (estadoJuego == EstadoJuego.PAUSADO) {
 
             batch.setProjectionMatrix(camaraHUD.combined);
             escenaPausa.draw();
@@ -305,7 +310,7 @@ public class PantallaJugando extends Pantalla {
 
     }
 
-    private void dibujarItems() {
+    private void dibujarItems() { //Implementar mas Items
         dibujarArregloCorazones();
     }
 
@@ -617,22 +622,22 @@ Encargado de verificar cualquier colision
 
     private void actualizaPuntuacion() { //Actualiza la puntuacion dependiendo de las veces que se han hecho cambios de fondo.
         if(cambiosFondo <= 10){
-            puntos+= 1*0.02f;
-        }
-        if(cambiosFondo > 10 && cambiosFondo <= 20){
             puntos+= 1*0.03f;
         }
-        if(cambiosFondo > 20 && cambiosFondo <= 30){
+        if(cambiosFondo > 10 && cambiosFondo <= 20){
             puntos+= 1*0.04f;
         }
+        if(cambiosFondo > 20 && cambiosFondo <= 30){
+            puntos+= 1*0.05f;
+        }
         if(cambiosFondo > 30 && cambiosFondo <= 40){
-            puntos+= 1*0.06f;
+            puntos+= 1*0.07f;
         }
         if(cambiosFondo > 40 && cambiosFondo <= 50){
-            puntos+= 1*0.09f;
+            puntos+= 1*0.1f;
         }
         if(cambiosFondo > 50) {
-            puntos += 1 * 0.5f;
+            puntos += 1 * 0.25f;
         }
     }
 
@@ -676,7 +681,7 @@ Encargado de verificar cualquier colision
 
     private void ActualizaPosicionesFondos() { // Actualiza las posiciones de los fondos para hacerlos infinitos
         xFondo-=10;             //Es el cursor de la posición
-        xFondoBase-=10;
+        xFondoBase-=10;                                                 //Aqui se puede implementar metodo de modificacion de velocidad de fondo.
         xFondoApoyo-=10;
         if (xFondo == -texturaFondoBase.getWidth()){
             xFondoBase = xFondoApoyo+texturaFondoApoyo.getWidth();
@@ -964,13 +969,13 @@ Encargado de verificar cualquier colision
     private enum EstadoJuego {
         JUGANDO,
         PAUSADO,
-        PIERDE,
-        REINICIO
+        PIERDE
     }
     private enum EstadoMapa {
         RURAL,
         URBANO,
-        UNIVERSIDAD
+        UNIVERSIDAD,
+        SALONES
     }
 
 
