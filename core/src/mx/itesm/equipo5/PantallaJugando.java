@@ -57,6 +57,18 @@ public class PantallaJugando extends Pantalla {
     private Texture texturaFondo2_4;
     private Texture texturaFondo2_5;
 
+    private Texture texturaFondo3_1;
+    private Texture texturaFondo3_2;
+    private Texture texturaFondo3_3;
+    private Texture texturaFondo3_4;
+    private Texture texturaFondo3_5;
+
+    private Texture texturaFondo4_1;
+    private Texture texturaFondo4_2;
+    private Texture texturaFondo4_3;
+    private Texture texturaFondo4_4;
+    private Texture texturaFondo4_5;
+
     private Texture texturaFondoApoyo;
     private Texture texturaFondoBase;
     private boolean modificacionFondoBase =false;  //Contiene el significado si ya se modifico los fondos base.
@@ -181,7 +193,7 @@ public class PantallaJugando extends Pantalla {
         //Inicializa texturas
         texturaCamioneta = new Texture("pantallaJugando/Enemigos/camioneta.png");
         texturaCocheLujo = new Texture("pantallaJugando/Enemigos/carro.png");
-        texturaCarritoGolf = new Texture("pantallaJugando/Enemigos/camioneta.png");
+        texturaCarritoGolf = new Texture("pantallaJugando/Enemigos/carroTec.png");
 
             //Inicializa areglos
         arrEnemigosCamioneta=new Array<>();
@@ -248,6 +260,17 @@ public class PantallaJugando extends Pantalla {
         texturaFondo2_4=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_4.png");
         texturaFondo2_5=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_5.png");
         //Mapas Universidad
+        texturaFondo3_1=new Texture("pantallaJugando/Mapas/Universidad/Universidad3_1.png");
+        texturaFondo3_2=new Texture("pantallaJugando/Mapas/Universidad/Universidad3_2.png");
+        texturaFondo3_3=new Texture("pantallaJugando/Mapas/Universidad/Universidad3_3.png");
+        texturaFondo3_4=new Texture("pantallaJugando/Mapas/Universidad/Universidad3_4.png");
+        texturaFondo3_5=new Texture("pantallaJugando/Mapas/Universidad/Universidad3_5.png");
+        //Mapas Salones
+        texturaFondo4_1=new Texture("pantallaJugando/Mapas/Salones/Salones4_1.png");
+        texturaFondo4_2=new Texture("pantallaJugando/Mapas/Salones/Salones4_2.png");
+        texturaFondo4_3=new Texture("pantallaJugando/Mapas/Salones/Salones4_3.png");
+        texturaFondo4_4=new Texture("pantallaJugando/Mapas/Salones/Salones4_4.png");
+        texturaFondo4_5=new Texture("pantallaJugando/Mapas/Salones/Salones4_5.png");
 
     }
 
@@ -346,6 +369,10 @@ public class PantallaJugando extends Pantalla {
         if(estadoMapa==EstadoMapa.UNIVERSIDAD){//El vehiculo es el unico que cambio por escenario
             dibujarArregloCarritos();
         }
+        /*if (estadoMapa == EstadoMapa.SALONES){  AUN NO IMPLEMENTADO
+            dibujarArregloSillas();
+            dibujarArregloLamparas();
+        }*/
 
         /*
         IMPLEMENTAR
@@ -449,12 +476,15 @@ public class PantallaJugando extends Pantalla {
         if(cambiosFondo >= 0 && cambiosFondo < 10){
             estadoMapa= EstadoMapa.RURAL;
         }
-        if(cambiosFondo >= 10){
+        if(cambiosFondo >= 10 && cambiosFondo < 15){
             estadoMapa= EstadoMapa.URBANO;
         }
-        /*if(cambiosFondo >= 60){
+        if(cambiosFondo >= 15 && cambiosFondo < 20){
             estadoMapa= EstadoMapa.UNIVERSIDAD;
-        }*/
+        }
+        if(cambiosFondo >= 20 && cambiosFondo < 25){
+            estadoMapa= EstadoMapa.SALONES;
+        }
 
     }
 
@@ -727,7 +757,39 @@ Encargado de verificar cualquier colision
             if(noAleatorio == 5){
                 return texturaFondo2_5;
             }
-        }
+        } else if (estadoMapa == EstadoMapa.UNIVERSIDAD) {
+            if(noAleatorio == 1){
+                return texturaFondo3_1;
+            }
+            if(noAleatorio == 2){
+                return texturaFondo3_2;
+            }
+            if(noAleatorio == 3){
+                return texturaFondo3_3;
+            }
+            if(noAleatorio == 4){
+                return texturaFondo3_4;
+            }
+            if(noAleatorio == 5){
+                return texturaFondo3_5;
+            }
+        }else if (estadoMapa == EstadoMapa.SALONES) {
+            if (noAleatorio == 1) {
+                return texturaFondo4_1;
+                }
+            if (noAleatorio == 2) {
+                return texturaFondo4_2;
+                }
+            if (noAleatorio == 3) {
+                return texturaFondo4_3;
+                }
+            if (noAleatorio == 4) {
+                return texturaFondo4_4;
+                }
+            if (noAleatorio == 5) {
+                return texturaFondo4_5;
+                }
+            }
         return null;
     }
 
