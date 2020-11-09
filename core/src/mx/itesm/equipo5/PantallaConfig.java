@@ -39,15 +39,13 @@ public class PantallaConfig extends Pantalla{
     public void show() {
         texturaFondo=new Texture("pantallaConfig/fondo.png");
 
-        //titulo=new Texture("titulo.png");
-        crearMenu();
-        crearAudio();
-
         /*Cargar preferencias*/
         prefs=Gdx.app.getPreferences("music");
         musicPreference=prefs.getBoolean("music",true);
-
-
+        //titulo=new Texture("titulo.png");
+        crearMenu();
+        crearAudio();
+        Gdx.app.log("prefe","preferencias al inicio: "+musicPreference);
     }
 
     private void crearAudio() {
@@ -64,7 +62,7 @@ public class PantallaConfig extends Pantalla{
         Texture texturaBtnRegresar  =new Texture("botonesMenu/btnRegreso.png");
         TextureRegionDrawable trdBtnRegresar=new TextureRegionDrawable(new TextureRegion(texturaBtnRegresar));
 
-        ImageButton btnRegresar=new ImageButton(trdBtnRegresar);
+        final ImageButton btnRegresar=new ImageButton(trdBtnRegresar);
         btnRegresar.setPosition(btnRegresar.getWidth(),btnRegresar.getHeight(), Align.center);
         //Programar el evento de click
         btnRegresar.addListener(new ClickListener() {
@@ -73,35 +71,61 @@ public class PantallaConfig extends Pantalla{
                 super.clicked(event, x, y);
                 efectoClick.play();
                 //Cambiamos de pantalla (el objeto juego, setScreen)
-                 juego.setScreen(new PantallaMenu(juego));
+                juego.setScreen(new PantallaMenu(juego));
             }
         });
         //boton musica
         Texture texturaBtnMusic  =new Texture("pantallaConfig/m.png");
         TextureRegionDrawable trdBtnMusic=new TextureRegionDrawable(new TextureRegion(texturaBtnMusic));
 
-        ImageButton btnMusic=new ImageButton(trdBtnMusic);
-        btnMusic.setPosition(ANCHO*0.30f,ALTO*0.40f);
+        ImageButton btnMusic=new ImageButton(trdBtnMusic);//**********
+
+
+
+        btnMusic.setPosition(ANCHO*0.10f,ALTO*0.50f);
         btnMusic.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
 
-                efectoClick.play();
-                if(musicPreference){
-                    prefs.putBoolean("music",false);
-                    musicPreference=false;
-                }
-                else {
+                super.clicked(event, x, y);
+                if(!musicPreference){
                     prefs.putBoolean("music",true);
                     musicPreference=true;
+
+
                 }
+
+                efectoClick.play();
+
                 prefs.flush();
+                Gdx.app.log("prefe","preferencias al tocar boton: "+prefs.getBoolean("music"));
             }
         });
 
 
+        Texture texturaBtnMusicOff  =new Texture("pantallaConfig/off.png");
+        TextureRegionDrawable trdBtnMusicOff=new TextureRegionDrawable(new TextureRegion(texturaBtnMusicOff));
 
+        ImageButton btnMusicOff=new ImageButton(trdBtnMusicOff);
+        btnMusicOff.setPosition(ANCHO*0.50f,ALTO*0.50f);
+        //Programar el evento de click
+        btnMusicOff.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                efectoClick.play();
+
+
+                if(musicPreference){
+                    prefs.putBoolean("music",false);
+                    musicPreference=false;
+
+                }
+                prefs.flush();
+                Gdx.app.log("prefe","preferencias al tocar boton: "+prefs.getBoolean("music"));
+            }
+        });
+        escenaMenu.addActor(btnMusicOff);
         escenaMenu.addActor(btnRegresar);
         escenaMenu.addActor(btnMusic);
         Gdx.input.setInputProcessor(escenaMenu);
@@ -115,7 +139,7 @@ public class PantallaConfig extends Pantalla{
 
         batch.begin();
         batch.draw(texturaFondo,0,0);
-       // batch.draw(titulo,ANCHO/2-(titulo.getWidth()/2),ALTO-100);
+        // batch.draw(titulo,ANCHO/2-(titulo.getWidth()/2),ALTO-100);
         batch.end();
         escenaMenu.draw();
     }
@@ -133,7 +157,7 @@ public class PantallaConfig extends Pantalla{
     @Override
     public void dispose() {
         texturaFondo.dispose();
-       // titulo.dispose();
+        // titulo.dispose();
         batch.dispose();
     }
 }

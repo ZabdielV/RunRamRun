@@ -8,13 +8,17 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class Ramiro extends Objeto{
-
     private Animation<TextureRegion> animacion;//Los frames del personaje...
     private float timerAnimacion;
     private TextureRegion[][] texturasFrames;
+    private TextureRegion frame;//NOOOOOOOOOOOOOOOO
 
+    private TextureRegion[][] texturasFrames2;
+    private Animation<TextureRegion> animacion02;
 
     private Texture texturaAgachado;//Agachado texture
+
+    EstadoItem estadoItem=EstadoItem.NORMAL;
 
     //Salto
     private float yBase;   //Y del piso
@@ -25,7 +29,7 @@ public class Ramiro extends Objeto{
 
     private EstadoRamiro estado;
 
-    public Ramiro(Texture textura, float x, float y){
+    public Ramiro(Texture textura, Texture textura2,float x, float y){
         TextureRegion region=new TextureRegion(textura);//La textura es toda la imagen, la region divide la imagen en frames
         texturasFrames=region.split(153,290);//Una matriz de regiones, seleccion de uan region...
 
@@ -40,6 +44,16 @@ public class Ramiro extends Objeto{
         animacion=new Animation<TextureRegion>(0.1f,arrFrames);//10 cuadros por segundo por que cada uno dura 0.1f
         animacion.setPlayMode(Animation.PlayMode.LOOP);
         timerAnimacion=0;
+
+        //Animacion 02.
+        TextureRegion region2=new TextureRegion(textura2);//La textura es toda la imagen, la region divide la imagen en frames
+        texturasFrames2=region2.split(154,290);//Una matriz de regiones, seleccion de uan region...
+        TextureRegion[] arrFrames2= {texturasFrames2[0][10],texturasFrames2[0][9],texturasFrames2[0][8],texturasFrames2[0][7],
+                texturasFrames2[0][6],texturasFrames2[0][5],texturasFrames2[0][4],texturasFrames2[0][3],texturasFrames2[0][2]
+        };
+        animacion02=new Animation<TextureRegion>(0.1f,arrFrames2);//10 cuadros por segundo por que cada uno dura 0.1f
+        animacion02.setPlayMode(Animation.PlayMode.LOOP);
+
 
         //SALTO
         yBase=y;
@@ -64,7 +78,18 @@ public class Ramiro extends Objeto{
         float delta= Gdx.graphics.getDeltaTime();//1/60
         if(estado==EstadoRamiro.CAMINADO){
             timerAnimacion+=delta;//Acumula
-            TextureRegion frame=animacion.getKeyFrame(timerAnimacion);//Calcula en base al tiempo el frame correspondiente
+            // frame=animacion.getKeyFrame(timerAnimacion);//Calcula en base al tiempo el frame correspondiente
+
+            if(estadoItem==EstadoItem.NORMAL){
+                frame=animacion.getKeyFrame(timerAnimacion);
+                sprite.setRegion(texturasFrames[0][6]);
+            }
+
+            if(estadoItem==EstadoItem.INMUNE){
+                frame=animacion02.getKeyFrame(timerAnimacion);
+                sprite.setRegion(texturasFrames2[0][6]);
+            }
+
             batch.draw(frame,sprite.getX(),sprite.getY());
         }if(estado==EstadoRamiro.SALTANDO){
 
@@ -82,5 +107,13 @@ public class Ramiro extends Objeto{
 
     }
 
+    public void setEstadoItem(EstadoItem estadoItem) {
+        this.estadoItem = estadoItem;
+    }
 
+
+    enum  EstadoItem {
+        NORMAL,
+        INMUNE
+    }
 }

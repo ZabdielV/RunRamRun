@@ -40,6 +40,9 @@ public class PantallaJugando extends Pantalla {
     //Personaje Ramiro
     private mx.itesm.equipo5.Ramiro ramiro;
     private Texture texturaRamiroMov1;
+    private Texture texturaRamiroMov2;
+    private float tiempoInmunidadRamiro=0;
+    private boolean inmunidadRamiro;
 
     //Preferencias
     private boolean music;
@@ -121,6 +124,11 @@ public class PantallaJugando extends Pantalla {
     private Corazon corazon;
     private Texture texturaItemCorazon;
 
+    private Array<RayoEmprendedor> arrRayoEmprendedor;
+    private RayoEmprendedor rayo;
+    private Texture texturaRayoEmprendedor;
+
+
     //Sirve para tomar items correctamente
     private float tiempoInmunidadItem=0f;
     private boolean inmunidadItem=false;
@@ -179,11 +187,18 @@ public class PantallaJugando extends Pantalla {
         crearCorazones();
         crearEnemigos();
         crearItemCorazon();
-
+        crearItemRayoEm();
         //Boton de pausa
         btnPausa=new Texture("pantallaJugando/botonPausa.png");
         Gdx.input.setInputProcessor(new ProcesadorEntrada());
     }
+
+    private void crearItemRayoEm() {
+        texturaRayoEmprendedor =new Texture("pantallaJugando/item/rayo.png");
+        arrRayoEmprendedor=new Array<>();
+
+    }
+
     private void cargarPreferencias() {
         //Preferencia musica
         Preferences musicPre=Gdx.app.getPreferences("music");
@@ -296,7 +311,8 @@ public class PantallaJugando extends Pantalla {
 
     private void crearRamiro() {                //Mejorar Ramiro
         texturaRamiroMov1= new Texture("pantallaJugando/personaje1/movRamiro2.png");//Sprite de movimientos
-        ramiro=new Ramiro(texturaRamiroMov1,150,50);
+        texturaRamiroMov2= new Texture("pantallaJugando/personaje1/Invencible.png");//Sprite de movimientos
+        ramiro=new Ramiro(texturaRamiroMov1,texturaRamiroMov2,150,50);
     }
 
     @Override
@@ -346,8 +362,48 @@ public class PantallaJugando extends Pantalla {
 
     }
 
-    private void dibujarItems() { //Implementar mas Items
-        dibujarArregloCorazones();
+    private void dibujarItems() {
+        //dibujarArregloCorazones();
+        //dibujarArregloRayos();
+
+        timerCrearItem += Gdx.graphics.getDeltaTime();
+        if (timerCrearItem>=TIEMPO_CREA_ITEM) {
+            timerCrearItem = 0;
+            TIEMPO_CREA_ITEM = tiempoBaseItem + MathUtils.random()*2;
+            int tipoItem=MathUtils.random(1,2);//Para que los items sean al azar
+
+            if(tipoItem==1){
+                rayo= new RayoEmprendedor(texturaRayoEmprendedor,ANCHO,120f+ MathUtils.random(0,2)*100);
+                arrRayoEmprendedor.add(rayo);
+
+            }else if(tipoItem==2){
+                corazon= new Corazon(texturaItemCorazon,ANCHO,120f+ MathUtils.random(0,2)*100);
+                arrCorazonesItem.add(corazon);
+            }
+            //Gdx.app.log("random","TipoItem :"+tipoItem);
+
+        }
+
+
+        for (int i = arrRayoEmprendedor.size-1; i >= 0; i--) {
+            RayoEmprendedor rayo = arrRayoEmprendedor.get(i);
+            if (rayo.sprite.getX() < 0- rayo.sprite.getWidth()) {
+                arrRayoEmprendedor.removeIndex(i);
+
+            }
+        }
+        for (int i = arrRayoEmprendedor.size-1; i >= 0; i--) {
+            RayoEmprendedor rayo = arrRayoEmprendedor.get(i);
+            if (rayo.sprite.getX() < 0- rayo.sprite.getWidth()) {
+                arrRayoEmprendedor.removeIndex(i);
+
+            }
+        }
+
+
+
+
+
     }
 
     private void dibujarArregloCorazones() {
@@ -573,8 +629,10 @@ public class PantallaJugando extends Pantalla {
     }
 
     private void quitarCorazones(){//Encargado de un corazon
-        efectoDamage.play();
-        vidas--;
+        if(ramiro.estadoItem== Ramiro.EstadoItem.NORMAL){
+            efectoDamage.play();
+            vidas--;
+        }
     }
     private void agregarCorazon() {
         if(vidas<vidasMaximas){
@@ -582,10 +640,25 @@ public class PantallaJugando extends Pantalla {
             vidas++;
         }
     }
+    private void inmunidadRamiro() {
+        efectoItem.play();
+        ramiro.setEstadoItem(Ramiro.EstadoItem.INMUNE);
+        inmunidadItem=true;
+        inmunidadRamiro=true;
+    }
 /*
 Encargado de verificar cualquier colision
  */
     private void verificarColisiones() {
+        if(inmunidadRamiro){
+            tiempoInmunidadRamiro += Gdx.graphics.getDeltaTime();
+        }
+        if(tiempoInmunidadRamiro>=3f){//despues de 0.6 seg, vuelve a ser vulnerable
+            inmunidadRamiro=false;
+            tiempoInmunidadRamiro=0f;
+            ramiro.setEstadoItem(Ramiro.EstadoItem.NORMAL);
+        }
+
 
         if (inmunidad){//Para evitar bugs, Ramiro puede tomar damage cada cierto tiempo...
             //Se activa cada vez que toma damage
@@ -613,6 +686,21 @@ Encargado de verificar cualquier colision
                         agregarCorazon();
 
                     inmunidadItem=true;
+                }
+
+            }
+
+        }
+        //Verifica colisiones Rayo emprendedor
+        for (int i=arrRayoEmprendedor.size-1; i>=0; i--) {
+            RayoEmprendedor rayo= arrRayoEmprendedor.get(i);
+
+            if(ramiro.sprite.getBoundingRectangle().overlaps(rayo.sprite.getBoundingRectangle())){//Colision de Item
+                if(inmunidadItem!=true){// asi se evita bugs.
+
+                    arrRayoEmprendedor.removeIndex(i);
+                    inmunidadRamiro();
+
                 }
 
             }
@@ -726,6 +814,8 @@ Encargado de verificar cualquier colision
 
     }
 
+
+
     private void moverCamionetas() {//Encargado de dibujar y mover las camionetas
         for (Camioneta cam : arrEnemigosCamioneta) {
             cam.render(batch);
@@ -803,6 +893,7 @@ Encargado de verificar cualquier colision
         moverItemCorazon();
         verificarColisiones();
         verificarMuerte();
+        moverItemRayo();
          /*
         IMPLEMENTAR
 
@@ -811,6 +902,13 @@ Encargado de verificar cualquier colision
         */
     }
 
+
+    private void moverItemRayo() {
+        for (RayoEmprendedor rayo : arrRayoEmprendedor) {
+            rayo.render(batch);
+            rayo.moverIzquierda();
+        }
+    }
 
     private void moverFondo() {//Mueve y cambia los fondos
         ActualizaPosicionesFondos();

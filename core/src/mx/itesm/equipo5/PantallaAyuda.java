@@ -36,7 +36,7 @@ public class PantallaAyuda extends Pantalla {
     public void show() {
         texturaFondo=new Texture("pantallaAyuda/fondo.png");
 
-       // titulo=new Texture("titulo.png");
+        // titulo=new Texture("titulo.png");
         crearMenu();
         crearAudio();
     }
@@ -66,10 +66,26 @@ public class PantallaAyuda extends Pantalla {
                 super.clicked(event, x, y);
                 efectoClick.play();
                 //Cambiamos de pantalla (el objeto juego, setScreen)
-                  juego.setScreen(new PantallaMenu(juego));
+                juego.setScreen(new PantallaMenu(juego));
             }
         });
 
+
+        Texture texturaBtnStory  =new Texture("pantallaAyuda/story.png");
+        TextureRegionDrawable trdBtnStory =new TextureRegionDrawable(new TextureRegion(texturaBtnStory));
+
+        ImageButton btnStory =new ImageButton(trdBtnStory);
+        btnStory.setPosition(ANCHO*0.49f,ALTO*0.1f, Align.center);
+        //Programar el evento de click
+        btnStory.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                super.clicked(event, x, y);
+                efectoClick.play();
+                juego.setScreen(new PantallaStory(juego));
+            }
+        });
+        escenaMenu.addActor(btnStory);
         escenaMenu.addActor(btnRegresar);
         Gdx.input.setInputProcessor(escenaMenu);
     }
@@ -100,7 +116,7 @@ public class PantallaAyuda extends Pantalla {
     @Override
     public void dispose() {
         texturaFondo.dispose();
-       // titulo.dispose();
+        // titulo.dispose();
         batch.dispose();
     }
 }
