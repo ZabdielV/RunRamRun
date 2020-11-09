@@ -74,7 +74,6 @@ public class PantallaJugando extends Pantalla {
     private boolean modificacionFondoBase =false;  //Contiene el significado si ya se modifico los fondos base.
 
     //Transiciones
-    //private Texture ruralUrbano;
     private boolean transicionUrbanaRural= false;  //checa si la transicion se realizo.
     private int noAleatorio= 1; //Ayuda a asignar los mapas aleatorios, este es el default.
 
@@ -143,6 +142,14 @@ public class PantallaJugando extends Pantalla {
     private Auto carroLujo;
     private Texture texturaCocheLujo;
 
+    private Array<Lampara> arrEnemigoLampara;
+    private Lampara lampara;
+    private Texture texturaLampara;
+
+    private Array<Silla> arrEnemigoSilla;
+    private Silla silla;
+    private Texture texturaSilla;
+
 
     //Sirve para quitar vidas correctamente, solo cuando tomas damage
     private float tiempoInmunidad=0f;//Eres inmune un tiempo si tomas damage
@@ -195,10 +202,16 @@ public class PantallaJugando extends Pantalla {
         texturaCocheLujo = new Texture("pantallaJugando/Enemigos/carro.png");
         texturaCarritoGolf = new Texture("pantallaJugando/Enemigos/carroTec.png");
 
+        texturaLampara= new Texture("pantallaJugando/Enemigos/Lampara.png");
+        texturaSilla= new Texture("pantallaJugando/Enemigos/Silla.png");
+
             //Inicializa areglos
         arrEnemigosCamioneta=new Array<>();
         arrEnemigosAuto= new Array<>();
         arrEnemigosCarritoGolf= new Array<>();
+
+        arrEnemigoLampara= new Array<>();
+        arrEnemigoSilla= new Array<>();
     }
 
     private void crearCorazones() {
@@ -369,10 +382,10 @@ public class PantallaJugando extends Pantalla {
         if(estadoMapa==EstadoMapa.UNIVERSIDAD){//El vehiculo es el unico que cambio por escenario
             dibujarArregloCarritos();
         }
-        /*if (estadoMapa == EstadoMapa.SALONES){  AUN NO IMPLEMENTADO
+        if (estadoMapa == EstadoMapa.SALONES){  //AUN NO IMPLEMENTADO
             dibujarArregloSillas();
             dibujarArregloLamparas();
-        }*/
+        }
 
         /*
         IMPLEMENTAR
@@ -381,6 +394,50 @@ public class PantallaJugando extends Pantalla {
         //dibujarTarea();
 
          */
+    }
+
+    private void dibujarArregloSillas() {
+        timerCrearEnemigo += Gdx.graphics.getDeltaTime();
+        if (timerCrearEnemigo>=TIEMPO_CREA_ENEMIGO) {
+            timerCrearEnemigo = 0;
+            TIEMPO_CREA_ENEMIGO = tiempoBase + MathUtils.random()*2;
+            if (tiempoBase>0) {
+                tiempoBase -= 0.01f;
+            }
+            silla = new Silla(texturaSilla,ANCHO,60f);
+            arrEnemigoSilla.add(silla);
+        }
+
+        //Si la lampara pasa de la pantalla, lo borra
+        for (int i = arrEnemigoSilla.size-1; i >= 0; i--) {
+            Silla silla = arrEnemigoSilla.get(i);
+            if (silla.sprite.getX() < 0- silla.sprite.getWidth()) {
+                arrEnemigoSilla.removeIndex(i);
+
+            }
+        }
+    }
+
+    private void dibujarArregloLamparas() {
+        timerCrearEnemigo += Gdx.graphics.getDeltaTime();
+        if (timerCrearEnemigo>=TIEMPO_CREA_ENEMIGO) {
+            timerCrearEnemigo = 0;
+            TIEMPO_CREA_ENEMIGO = tiempoBase + MathUtils.random()*2;
+            if (tiempoBase>0) {
+                tiempoBase -= 0.01f;
+            }
+            lampara = new Lampara(texturaLampara,ANCHO,ALTO*0.65f);
+            arrEnemigoLampara.add(lampara);
+        }
+
+        //Si la lampara pasa de la pantalla, lo borra
+        for (int i = arrEnemigoLampara.size-1; i >= 0; i--) {
+            Lampara lampara = arrEnemigoLampara.get(i);
+            if (lampara.sprite.getX() < 0- lampara.sprite.getWidth()) {
+                arrEnemigoLampara.removeIndex(i);
+
+            }
+        }
     }
 
     private void dibujarArregloCarritos() {
@@ -625,6 +682,47 @@ Encargado de verificar cualquier colision
             }
         }
 
+        //Verifica colisiones de las lamparas
+        if(estadoMapa==EstadoMapa.SALONES){
+            for (int i=arrEnemigoLampara.size-1; i>=0; i--) {
+                Lampara lampara = arrEnemigoLampara.get(i);
+
+                // Gdx.app.log("Width","width"+vehiculo.sprite.getBoundingRectangle().width);
+                if(ramiro.sprite.getBoundingRectangle().overlaps(lampara.sprite.getBoundingRectangle())){//Colision de camioneta
+                    //Ramiro se vuelve inmune 0.6 seg
+
+                    if(inmunidad!=true){//Si no ha tomado damage, entoces se vuelve inmune, asi se evita bugs.
+                        if(vidas>0){//Mientras te queden vidas en el arreglo
+                            quitarCorazones();//Se resta una vida
+                        }
+                        inmunidad=true;
+                    }
+
+                }
+
+            }
+            //Verifica colisiones de las sillas
+            for (int i=arrEnemigoSilla.size-1; i>=0; i--) {
+                Silla silla = arrEnemigoSilla.get(i);
+
+                // Gdx.app.log("Width","width"+vehiculo.sprite.getBoundingRectangle().width);
+                if(ramiro.sprite.getBoundingRectangle().overlaps(silla.sprite.getBoundingRectangle())){//Colision de camioneta
+                    //Ramiro se vuelve inmune 0.6 seg
+
+                    if(inmunidad!=true){//Si no ha tomado damage, entoces se vuelve inmune, asi se evita bugs.
+                        if(vidas>0){//Mientras te queden vidas en el arreglo
+                            quitarCorazones();//Se resta una vida
+                        }
+                        inmunidad=true;
+                    }
+
+                }
+
+            }
+        }
+
+
+
 
     }
 
@@ -647,6 +745,22 @@ Encargado de verificar cualquier colision
             carrito.render(batch);
 
             carrito.moverIzquierda();
+        }
+    }
+
+    private void moverLamparas() {
+        for (Lampara lampara : arrEnemigoLampara) {
+            lampara.render(batch);
+
+            lampara.moverIzquierda();
+        }
+    }
+
+    private void moverSillas() {
+        for (Silla silla : arrEnemigoSilla) {
+            silla.render(batch);
+
+            silla.moverIzquierda();
         }
     }
 
@@ -681,6 +795,10 @@ Encargado de verificar cualquier colision
         if(estadoMapa== EstadoMapa.UNIVERSIDAD){
             moverCarritoGolf();
         }
+        if (estadoMapa == EstadoMapa.SALONES){
+            moverLamparas();
+            moverSillas();
+        }
         actualizaPuntuacion();
         moverItemCorazon();
         verificarColisiones();
@@ -692,6 +810,7 @@ Encargado de verificar cualquier colision
         //etc
         */
     }
+
 
     private void moverFondo() {//Mueve y cambia los fondos
         ActualizaPosicionesFondos();
