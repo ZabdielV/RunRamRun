@@ -569,7 +569,6 @@ public class PantallaJugando extends Pantalla {
         for (int i = 0; i <vidas; i++) {
             batch.draw(arrCorazones.get(i),ANCHO*0.02f+i*105,ALTO*0.8f);
         }
-
     }
 
     private void dibujarTexto() {
@@ -649,7 +648,10 @@ public class PantallaJugando extends Pantalla {
         ramiro.setEstadoItem(Ramiro.EstadoItem.INMUNE);
         inmunidadItem=true;
         inmunidadRamiro=true;
-        musicaFondo.pause();
+        if(music){
+            musicaFondo.pause();
+        }
+
         musicaRayo.play();
     }
 /*
@@ -663,8 +665,12 @@ Encargado de verificar cualquier colision
             inmunidadRamiro=false;
             tiempoInmunidadRamiro=0f;
             ramiro.setEstadoItem(Ramiro.EstadoItem.NORMAL);
-        }
+            musicaRayo.stop();
+            if(music){
+                musicaFondo.play();
+            }
 
+        }
 
         if (inmunidad){//Para evitar bugs, Ramiro puede tomar damage cada cierto tiempo...
             //Se activa cada vez que toma damage
@@ -680,8 +686,7 @@ Encargado de verificar cualquier colision
         if(tiempoInmunidadItem>=0.6f){
             inmunidadItem=false;
             tiempoInmunidadItem=0f;
-            musicaRayo.stop();
-            musicaFondo.play();
+
         }
         //Verificar colisiones de Item Corazon.
         for (int i=arrCorazonesItem.size-1; i>=0; i--) {
@@ -692,7 +697,6 @@ Encargado de verificar cualquier colision
 
                         arrCorazonesItem.removeIndex(i);
                         agregarCorazon();
-
                     inmunidadItem=true;
                 }
 
@@ -1034,6 +1038,7 @@ Encargado de verificar cualquier colision
         efetoSalto.dispose();
         efectoClick.dispose();
         efectoGameOver.dispose();
+        musicaRayo.dispose();
     }
 
     private class ProcesadorEntrada implements InputProcessor {
