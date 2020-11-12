@@ -89,6 +89,7 @@ public class PantallaJugando extends Pantalla {
 
     // Musica
     private Music musicaFondo;
+    private Music musicaRayo;
 
     //Texto
     private Texto texto;
@@ -241,6 +242,7 @@ public class PantallaJugando extends Pantalla {
     private void crearAudio() {
         AssetManager manager=new AssetManager();
         manager.load("sounds/Gameplay.mp3",Music.class);
+        manager.load("sounds/Invincibility.mp3",Music.class);
         manager.load("sounds/Click.mp3",Sound.class);
         manager.load("sounds/Salto.mp3",Sound.class);
         manager.load("sounds/Muerte.mp3",Sound.class);
@@ -253,12 +255,14 @@ public class PantallaJugando extends Pantalla {
 
         //Musica
         musicaFondo = manager.get("sounds/Gameplay.mp3");
-        musicaFondo.setVolume(0.08f);
+        musicaFondo.setVolume(0.8f);
         musicaFondo.setLooping(true);
         if(music){
             musicaFondo.play();
-
         }
+        musicaRayo = manager.get("sounds/Invincibility.mp3");
+        musicaRayo.setVolume(0.5f);
+        musicaRayo.setLooping(true);
 
         //Efectos
         efectoClick=manager.get("sounds/Click.mp3");
@@ -645,6 +649,8 @@ public class PantallaJugando extends Pantalla {
         ramiro.setEstadoItem(Ramiro.EstadoItem.INMUNE);
         inmunidadItem=true;
         inmunidadRamiro=true;
+        musicaFondo.pause();
+        musicaRayo.play();
     }
 /*
 Encargado de verificar cualquier colision
@@ -674,6 +680,8 @@ Encargado de verificar cualquier colision
         if(tiempoInmunidadItem>=0.6f){
             inmunidadItem=false;
             tiempoInmunidadItem=0f;
+            musicaRayo.stop();
+            musicaFondo.play();
         }
         //Verificar colisiones de Item Corazon.
         for (int i=arrCorazonesItem.size-1; i>=0; i--) {
