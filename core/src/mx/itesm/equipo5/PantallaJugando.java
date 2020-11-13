@@ -218,7 +218,7 @@ public class PantallaJugando extends Pantalla {
         texturaCocheLujo = new Texture("pantallaJugando/Enemigos/carro.png");
         texturaCarritoGolf = new Texture("pantallaJugando/Enemigos/carroTec.png");
 
-        texturaLampara= new Texture("pantallaJugando/Enemigos/Lampara.png");
+        texturaLampara= new Texture("pantallaJugando/Enemigos/lampara.png");
         texturaSilla= new Texture("pantallaJugando/Enemigos/Silla.png");
 
             //Inicializa areglos
@@ -1078,6 +1078,10 @@ Encargado de verificar cualquier colision
                     if(music){
                         musicaFondo.pause();
                     }
+                    if(inmunidadRamiro){
+                        musicaRayo.pause();
+                    }
+
                 }
 
                // juego.setScreen(new PantallaPausa(juego));
@@ -1152,6 +1156,10 @@ Encargado de verificar cualquier colision
                 if(music){
                     musicaFondo.play();
                 }
+                if(inmunidadRamiro){
+                    musicaRayo.play();
+                }
+
                 Gdx.input.setInputProcessor(new ProcesadorEntrada());
             }
         });
