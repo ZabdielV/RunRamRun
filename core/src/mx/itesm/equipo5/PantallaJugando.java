@@ -101,6 +101,12 @@ public class PantallaJugando extends Pantalla {
     private float xFondoApoyo=3200; //Es el ancho de los fondos
     private int cambiosFondo=0;//Cuenta las veces que se ha movido el fondo...
 
+    //Marcador
+    private int puntosMarcador[]=new int[4];
+    private Preferences marc1;
+    private Preferences marc2;
+    private Preferences marc3;
+
     //Estados del juego
     private EstadoJuego estadoJuego = EstadoJuego.JUGANDO;
     private EstadoMapa estadoMapa;
@@ -171,8 +177,8 @@ public class PantallaJugando extends Pantalla {
     private float tiempoBase = 2.5f;
     //Cada cuanto tiempo aparece un item:Frecuencia
     private float timerCrearItem;
-    private float TIEMPO_CREA_ITEM = 4.0f;    // VARIABLE
-    private float tiempoBaseItem = 4.0f;
+    private float TIEMPO_CREA_ITEM = 15.0f;    // VARIABLE
+    private float tiempoBaseItem = 15.0f;
 
     public PantallaJugando(Juego juego){
         this.juego = juego;
@@ -189,9 +195,23 @@ public class PantallaJugando extends Pantalla {
         crearEnemigos();
         crearItemCorazon();
         crearItemRayoEm();
+        marcador();
         //Boton de pausa
         btnPausa=new Texture("pantallaJugando/botonPausa.png");
         Gdx.input.setInputProcessor(new ProcesadorEntrada());
+    }
+
+    private void marcador() {
+        marc1=Gdx.app.getPreferences("m1");
+        puntosMarcador[3]=marc1.getInteger("m1",0);
+
+        marc2=Gdx.app.getPreferences("m2");
+        puntosMarcador[2]=marc2.getInteger("m2",0);
+
+        marc3=Gdx.app.getPreferences("m3");
+        puntosMarcador[1]=marc3.getInteger("m3",0);
+
+
     }
 
     private void crearItemRayoEm() {
@@ -628,7 +648,33 @@ public class PantallaJugando extends Pantalla {
                     musicaFondo.pause();
                 }
             }
+            guardarPuntos();
         }
+    }
+
+    private void guardarPuntos() {
+        puntosMarcador[0]= (int) puntos;
+        //Ordena el arreglo de puntos despues de morir
+        for (int i = 0; i < puntosMarcador.length - 1; i++)
+        {
+            int index = i;
+            for (int j = i + 1; j < puntosMarcador.length; j++){
+                if (puntosMarcador[j] < puntosMarcador[index]){
+                    index = j;
+                }
+            }
+            int smallerNumber = puntosMarcador[index];
+            puntosMarcador[index] = puntosMarcador[i];
+            puntosMarcador[i] = smallerNumber;
+        }
+
+        marc1.putInteger("m1",puntosMarcador[3]);
+        marc2.putInteger("m2",puntosMarcador[2]);
+        marc3.putInteger("m3",puntosMarcador[1]);
+        marc1.flush();
+        marc2.flush();
+        marc3.flush();
+
     }
 
     private void quitarCorazones(){//Encargado de un corazon
@@ -661,7 +707,7 @@ Encargado de verificar cualquier colision
         if(inmunidadRamiro){
             tiempoInmunidadRamiro += Gdx.graphics.getDeltaTime();
         }
-        if(tiempoInmunidadRamiro>=3f){//despues de 0.6 seg, vuelve a ser vulnerable
+        if(tiempoInmunidadRamiro>=6f){//despues de 0.6 seg, vuelve a ser vulnerable
             inmunidadRamiro=false;
             tiempoInmunidadRamiro=0f;
             ramiro.setEstadoItem(Ramiro.EstadoItem.NORMAL);

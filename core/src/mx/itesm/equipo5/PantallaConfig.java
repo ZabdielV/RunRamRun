@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
@@ -74,60 +75,55 @@ public class PantallaConfig extends Pantalla{
                 juego.setScreen(new PantallaMenu(juego));
             }
         });
-        //boton musica
-        Texture texturaBtnMusic  =new Texture("pantallaConfig/m.png");
-        TextureRegionDrawable trdBtnMusic=new TextureRegionDrawable(new TextureRegion(texturaBtnMusic));
+        //Boton de Musica
 
-        ImageButton btnMusic=new ImageButton(trdBtnMusic);//**********
+        Texture texturaBtnM  =new Texture("pantallaConfig/onn.png");
+        TextureRegionDrawable trdBtnM=new TextureRegionDrawable(new TextureRegion(texturaBtnM));
 
+        Texture texturaBtnMOff  =new Texture("pantallaConfig/offf.png");
 
+        TextureRegionDrawable trdBtnMOff=new TextureRegionDrawable(new TextureRegion(texturaBtnMOff));
+        final Button.ButtonStyle estilo1=new Button.ButtonStyle(trdBtnM,null,null);
+        final Button.ButtonStyle estilo2=new Button.ButtonStyle(trdBtnMOff,null,null);
+        final ImageButton.ImageButtonStyle estiloPrendido=new ImageButton.ImageButtonStyle(estilo1);
+        final ImageButton.ImageButtonStyle estiloApagado=new ImageButton.ImageButtonStyle(estilo2);
+        final ImageButton btnM=new ImageButton(trdBtnM);
 
-        btnMusic.setPosition(ANCHO*0.10f,ALTO*0.50f);
-        btnMusic.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
+        if(musicPreference){
+            btnM.setStyle(estiloPrendido);
+        }
+        if(!musicPreference) {
+            btnM.setStyle(estiloApagado);
+        }
 
-                super.clicked(event, x, y);
-                if(!musicPreference){
-                    prefs.putBoolean("music",true);
-                    musicPreference=true;
-
-
-                }
-
-                efectoClick.play();
-
-                prefs.flush();
-                Gdx.app.log("prefe","preferencias al tocar boton: "+prefs.getBoolean("music"));
-            }
-        });
-
-
-        Texture texturaBtnMusicOff  =new Texture("pantallaConfig/off.png");
-        TextureRegionDrawable trdBtnMusicOff=new TextureRegionDrawable(new TextureRegion(texturaBtnMusicOff));
-
-        ImageButton btnMusicOff=new ImageButton(trdBtnMusicOff);
-        btnMusicOff.setPosition(ANCHO*0.50f,ALTO*0.50f);
-        //Programar el evento de click
-        btnMusicOff.addListener(new ClickListener() {
+        btnM.setPosition(ANCHO*0.3f,ALTO*0.35f);
+        btnM.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 efectoClick.play();
-
-
                 if(musicPreference){
+                    btnM.setStyle(estiloApagado);
                     prefs.putBoolean("music",false);
                     musicPreference=false;
 
+
+                }
+                else {
+                    btnM.setStyle(estiloPrendido);
+                    prefs.putBoolean("music",true);
+                    musicPreference=true;
                 }
                 prefs.flush();
                 Gdx.app.log("prefe","preferencias al tocar boton: "+prefs.getBoolean("music"));
+
             }
         });
-        escenaMenu.addActor(btnMusicOff);
+
+        escenaMenu.addActor(btnM);
+
         escenaMenu.addActor(btnRegresar);
-        escenaMenu.addActor(btnMusic);
+
         Gdx.input.setInputProcessor(escenaMenu);
     }
 
