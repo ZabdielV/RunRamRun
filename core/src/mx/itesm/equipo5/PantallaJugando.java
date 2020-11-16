@@ -35,7 +35,7 @@ public class PantallaJugando extends Pantalla {
     private Array<Texture> arrCorazones;
     //Vidas
     private int vidas=3;
-    private int vidasMaximas=6;
+    private int vidasMaximas=4;
 
     //Personaje Ramiro
     private mx.itesm.equipo5.Ramiro ramiro;
@@ -71,13 +71,19 @@ public class PantallaJugando extends Pantalla {
     private Texture texturaFondo4_3;
     private Texture texturaFondo4_4;
     private Texture texturaFondo4_5;
+    /////////////////////////////////////////Transiciones //////////////////////////////////////////
+    private Texture texturaRuralUrbano;
+    private Texture texturaUrbanoUniversidad;
+    private Texture texturaUniversidadSalones;
 
     private Texture texturaFondoApoyo;
     private Texture texturaFondoBase;
     private boolean modificacionFondoBase =false;  //Contiene el significado si ya se modifico los fondos base.
 
     //Transiciones
-    private boolean transicionUrbanaRural= false;  //checa si la transicion se realizo.
+    private boolean transicionRuralUrbana= false;  //checa si la transicion se realizo.
+    private boolean transicionUrbanaUniversidad= false;
+    private boolean transicionUniversidadSalones= false;
     private int noAleatorio= 1; //Ayuda a asignar los mapas aleatorios, este es el default.
 
     //Efecto sonido
@@ -323,6 +329,10 @@ public class PantallaJugando extends Pantalla {
         texturaFondo4_3=new Texture("pantallaJugando/Mapas/Salones/Salones4_3.png");
         texturaFondo4_4=new Texture("pantallaJugando/Mapas/Salones/Salones4_4.png");
         texturaFondo4_5=new Texture("pantallaJugando/Mapas/Salones/Salones4_5.png");
+        //Transiciones
+        texturaRuralUrbano= new Texture("pantallaJugando/Mapas/Transiciones/ruralUrbano.png");
+        texturaUrbanoUniversidad= new Texture("pantallaJugando/Mapas/Transiciones/urbanaUniversidad.png");
+        texturaUniversidadSalones= new Texture("pantallaJugando/Mapas/Transiciones/universidadSalones.png");
 
     }
 
@@ -423,11 +433,6 @@ public class PantallaJugando extends Pantalla {
 
             }
         }
-
-
-
-
-
     }
 
     private void dibujarArregloCorazones() {
@@ -462,7 +467,7 @@ public class PantallaJugando extends Pantalla {
         if(estadoMapa==EstadoMapa.UNIVERSIDAD){//El vehiculo es el unico que cambio por escenario
             dibujarArregloCarritos();
         }
-        if (estadoMapa == EstadoMapa.SALONES){  //AUN NO IMPLEMENTADO
+        if (estadoMapa == EstadoMapa.SALONES){
             dibujarArregloSillas();
             dibujarArregloLamparas();
         }
@@ -484,8 +489,11 @@ public class PantallaJugando extends Pantalla {
             if (tiempoBase>0) {
                 tiempoBase -= 0.01f;
             }
-            silla = new Silla(texturaSilla,ANCHO,60f);
-            arrEnemigoSilla.add(silla);
+            if (estadoMapa != EstadoMapa.UNIVERSIDADSALONES && cambiosFondo >= 22) {
+                silla = new Silla(texturaSilla,ANCHO,75f);
+                arrEnemigoSilla.add(silla);
+            }
+
         }
 
         //Si la lampara pasa de la pantalla, lo borra
@@ -506,8 +514,11 @@ public class PantallaJugando extends Pantalla {
             if (tiempoBase>0) {
                 tiempoBase -= 0.01f;
             }
-            lampara = new Lampara(texturaLampara,ANCHO,ALTO*0.65f);
-            arrEnemigoLampara.add(lampara);
+            if (estadoMapa != EstadoMapa.UNIVERSIDADSALONES && cambiosFondo >= 23){
+                lampara = new Lampara(texturaLampara,ANCHO,ALTO*0.65f);
+                arrEnemigoLampara.add(lampara);
+            }
+
         }
 
         //Si la lampara pasa de la pantalla, lo borra
@@ -528,8 +539,10 @@ public class PantallaJugando extends Pantalla {
             if (tiempoBase>0) {
                 tiempoBase -= 0.01f;
             }
-            carritoGolf = new AutoGolf(texturaCarritoGolf,ANCHO,60f);
-            arrEnemigosCarritoGolf.add(carritoGolf);
+            if (estadoMapa != EstadoMapa.URBANOUNIVERSIDAD && cambiosFondo >= 17) {
+                carritoGolf = new AutoGolf(texturaCarritoGolf,ANCHO,60f);
+                arrEnemigosCarritoGolf.add(carritoGolf);
+            }
         }
 
         //Si el vehiculo se paso de la pantalla, lo borra
@@ -549,8 +562,11 @@ public class PantallaJugando extends Pantalla {
             if (tiempoBase>0) {
                 tiempoBase -= 0.01f;
             }
-            carroLujo= new Auto(texturaCocheLujo,ANCHO,60f);
-            arrEnemigosAuto.add(carroLujo);
+            if (estadoMapa != EstadoMapa.RURALURBANO && cambiosFondo >= 12){
+                carroLujo= new Auto(texturaCocheLujo,ANCHO,60f);
+                arrEnemigosAuto.add(carroLujo);
+            }
+
         }
 
         //Si el vehiculo se paso de la pantalla, lo borra
@@ -571,8 +587,11 @@ public class PantallaJugando extends Pantalla {
             if (tiempoBase>0) {
                 tiempoBase -= 0.01f;
             }
+
             camioneta= new Camioneta(texturaCamioneta,ANCHO,60f);
             arrEnemigosCamioneta.add(camioneta);
+
+
         }
 
         //Si el vehiculo se paso de la pantalla, lo borra
@@ -612,13 +631,22 @@ public class PantallaJugando extends Pantalla {
         if(cambiosFondo >= 0 && cambiosFondo < 10){
             estadoMapa= EstadoMapa.RURAL;
         }
-        if(cambiosFondo >= 10 && cambiosFondo < 15){
+        if(cambiosFondo == 10){
+            estadoMapa= EstadoMapa.RURALURBANO;
+        }
+        if(cambiosFondo > 10 && cambiosFondo < 15){
             estadoMapa= EstadoMapa.URBANO;
         }
-        if(cambiosFondo >= 15 && cambiosFondo < 20){
+        if(cambiosFondo == 15 ){
+            estadoMapa= EstadoMapa.URBANOUNIVERSIDAD;
+        }
+        if(cambiosFondo > 15 && cambiosFondo < 20){
             estadoMapa= EstadoMapa.UNIVERSIDAD;
         }
-        if(cambiosFondo >= 20 && cambiosFondo < 25){
+        if(cambiosFondo == 20){
+            estadoMapa= EstadoMapa.UNIVERSIDADSALONES;
+        }
+        if(cambiosFondo > 20 && cambiosFondo < 25){
             estadoMapa= EstadoMapa.SALONES;
         }
 
@@ -872,8 +900,6 @@ Encargado de verificar cualquier colision
 
     }
 
-
-
     private void moverCamionetas() {//Encargado de dibujar y mover las camionetas
         for (Camioneta cam : arrEnemigosCamioneta) {
             cam.render(batch);
@@ -934,10 +960,10 @@ Encargado de verificar cualquier colision
     }
 
     private void actualizarEnemigosItems() {  //mueve los enemigos e items, por lo mismo verifica si hay colision.
-        if(estadoMapa== EstadoMapa.RURAL){
+        if(estadoMapa== EstadoMapa.RURAL ){
             moverCamionetas();
         }
-        if(estadoMapa== EstadoMapa.URBANO){
+        if(estadoMapa== EstadoMapa.URBANO){  //INTENTA PONIENDO EN TRUE CUANDO LLEGUE A CADA PUNTO DE ESTOS
             moverCarroLujo();
         }
         if(estadoMapa== EstadoMapa.UNIVERSIDAD){
@@ -1064,7 +1090,13 @@ Encargado de verificar cualquier colision
             if (noAleatorio == 5) {
                 return texturaFondo4_5;
                 }
-            }
+        } else if (estadoMapa == EstadoMapa.RURALURBANO) {              //Trancisiones
+            return texturaRuralUrbano;
+        } else if (estadoMapa == EstadoMapa.URBANOUNIVERSIDAD) {
+            return texturaUrbanoUniversidad;
+        } else if (estadoMapa == EstadoMapa.UNIVERSIDADSALONES) {
+            return texturaUniversidadSalones;
+        }
         return null;
     }
 
@@ -1321,7 +1353,13 @@ Encargado de verificar cualquier colision
         RURAL,
         URBANO,
         UNIVERSIDAD,
-        SALONES
+        SALONES,
+
+        //Transiciones
+
+        RURALURBANO,
+        URBANOUNIVERSIDAD,
+        UNIVERSIDADSALONES
     }
 
 
