@@ -81,9 +81,6 @@ public class PantallaJugando extends Pantalla {
     private boolean modificacionFondoBase =false;  //Contiene el significado si ya se modifico los fondos base.
 
     //Transiciones
-    private boolean transicionRuralUrbana= false;  //checa si la transicion se realizo.
-    private boolean transicionUrbanaUniversidad= false;
-    private boolean transicionUniversidadSalones= false;
     private int noAleatorio= 1; //Ayuda a asignar los mapas aleatorios, este es el default.
 
     //Efecto sonido
@@ -171,6 +168,10 @@ public class PantallaJugando extends Pantalla {
     private Silla silla;
     private Texture texturaSilla;
 
+    private Array<Ave> arrEnemigoAve;
+    private Ave ave;
+    private Texture texturaAve;
+
 
     //Sirve para quitar vidas correctamente, solo cuando tomas damage
     private float tiempoInmunidad=0f;//Eres inmune un tiempo si tomas damage
@@ -246,6 +247,8 @@ public class PantallaJugando extends Pantalla {
 
         texturaLampara= new Texture("pantallaJugando/Enemigos/lampara.png");
         texturaSilla= new Texture("pantallaJugando/Enemigos/Silla.png");
+        texturaAve= new Texture("pantallaJugando/Enemigos/pajaro.png");
+
 
             //Inicializa areglos
         arrEnemigosCamioneta=new Array<>();
@@ -254,6 +257,7 @@ public class PantallaJugando extends Pantalla {
 
         arrEnemigoLampara= new Array<>();
         arrEnemigoSilla= new Array<>();
+        arrEnemigoAve= new Array<>();
     }
 
     private void crearCorazones() {
@@ -362,9 +366,9 @@ public class PantallaJugando extends Pantalla {
 
         if (estadoJuego == EstadoJuego.JUGANDO){
 
+            dibujarEnemigos();
             actualizarEnemigosItems();                      //Actualiza solo items y enemigos
 
-            dibujarEnemigos();
             dibujarItems();
             dibujarTexto();
             dibujarCorazones();
@@ -460,25 +464,54 @@ public class PantallaJugando extends Pantalla {
 
         if(estadoMapa==EstadoMapa.RURAL){//El vehiculo es el unico que cambio por escenario
             dibujarArregloCamionetas();
+            dibujarArregloAve();
         }
         if(estadoMapa==EstadoMapa.URBANO){//El vehiculo es el unico que cambio por escenario
             dibujarArregloCoche();
+            dibujarArregloAve();
         }
         if(estadoMapa==EstadoMapa.UNIVERSIDAD){//El vehiculo es el unico que cambio por escenario
             dibujarArregloCarritos();
+            dibujarArregloAve();
         }
         if (estadoMapa == EstadoMapa.SALONES){
             dibujarArregloSillas();
             dibujarArregloLamparas();
         }
+        if(estadoMapa==EstadoMapa.RURALURBANO){//El vehiculo es el unico que cambio por escenario
+            dibujarArregloAve();
+        }
+        if (estadoMapa == EstadoMapa.URBANOUNIVERSIDAD){
+            dibujarArregloAve();
+        }
 
         /*
         IMPLEMENTAR
-
-        //dibujarPajaro();
         //dibujarTarea();
-
          */
+    }
+
+    private void dibujarArregloAve() {
+        timerCrearEnemigo += Gdx.graphics.getDeltaTime();
+        if (timerCrearEnemigo>=TIEMPO_CREA_ENEMIGO) {
+            timerCrearEnemigo = 0;
+            TIEMPO_CREA_ENEMIGO = tiempoBase + MathUtils.random()*2;
+            if (tiempoBase>0) {
+                tiempoBase -= 0.01f;
+            }
+            //Ajustar para que salga aleatoriamente en distintas alturas
+                ave = new Ave(texturaAve,ANCHO,ALTO*.60f);
+                arrEnemigoAve.add(ave);
+        }
+
+        //Si la lampara pasa de la pantalla, lo borra
+        for (int i = arrEnemigoAve.size-1; i >= 0; i--) {
+            Ave ave = arrEnemigoAve.get(i);
+            if (ave.sprite.getX() < 0- ave.sprite.getWidth()) {
+                arrEnemigoAve.removeIndex(i);
+
+            }
+        }
     }
 
     private void dibujarArregloSillas() {
@@ -794,7 +827,7 @@ Encargado de verificar cualquier colision
         }
 
         //Verifica colisiones de camioneta
-        if(estadoMapa==EstadoMapa.RURAL){
+        if(estadoMapa==EstadoMapa.RURAL || estadoMapa==EstadoMapa.RURALURBANO){
             for (int i=arrEnemigosCamioneta.size-1; i>=0; i--) {
                 Camioneta camioneta = arrEnemigosCamioneta.get(i);
 
@@ -812,15 +845,51 @@ Encargado de verificar cualquier colision
                 }
 
             }
+
+            for (int i=arrEnemigoAve.size-1; i>=0; i--) {
+                Ave ave = arrEnemigoAve.get(i);
+
+                // Gdx.app.log("Width","width"+vehiculo.sprite.getBoundingRectangle().width);
+                if(ramiro.sprite.getBoundingRectangle().overlaps(ave.sprite.getBoundingRectangle())){//Colision de camioneta
+                    //Ramiro se vuelve inmune 0.6 seg
+
+                    if(inmunidad!=true){//Si no ha tomado damage, entoces se vuelve inmune, asi se evita bugs.
+                        if(vidas>0){//Mientras te queden vidas en el arreglo
+                            quitarCorazones();//Se resta una vida
+                        }
+                        inmunidad=true;
+                    }
+
+                }
+
+            }
         }
 
         //Verifica colisiones de carro de Lujo
-        if(estadoMapa==EstadoMapa.URBANO){
+        if(estadoMapa==EstadoMapa.URBANO || estadoMapa == EstadoMapa.URBANOUNIVERSIDAD){
             for (int i=arrEnemigosAuto.size-1; i>=0; i--) {
                 Auto cocheLujo = arrEnemigosAuto.get(i);
 
                 // Gdx.app.log("Width","width"+vehiculo.sprite.getBoundingRectangle().width);
                 if(ramiro.sprite.getBoundingRectangle().overlaps(cocheLujo.sprite.getBoundingRectangle())){//Colision de camioneta
+                    //Ramiro se vuelve inmune 0.6 seg
+
+                    if(inmunidad!=true){//Si no ha tomado damage, entoces se vuelve inmune, asi se evita bugs.
+                        if(vidas>0){//Mientras te queden vidas en el arreglo
+                            quitarCorazones();//Se resta una vida
+                        }
+                        inmunidad=true;
+                    }
+
+                }
+
+            }
+
+            for (int i=arrEnemigoAve.size-1; i>=0; i--) {
+                Ave ave = arrEnemigoAve.get(i);
+
+                // Gdx.app.log("Width","width"+vehiculo.sprite.getBoundingRectangle().width);
+                if(ramiro.sprite.getBoundingRectangle().overlaps(ave.sprite.getBoundingRectangle())){//Colision de camioneta
                     //Ramiro se vuelve inmune 0.6 seg
 
                     if(inmunidad!=true){//Si no ha tomado damage, entoces se vuelve inmune, asi se evita bugs.
@@ -960,14 +1029,17 @@ Encargado de verificar cualquier colision
     }
 
     private void actualizarEnemigosItems() {  //mueve los enemigos e items, por lo mismo verifica si hay colision.
-        if(estadoMapa== EstadoMapa.RURAL ){
+        if(estadoMapa== EstadoMapa.RURAL || estadoMapa== EstadoMapa.RURALURBANO ){
             moverCamionetas();
+            moverAves();
         }
-        if(estadoMapa== EstadoMapa.URBANO){  //INTENTA PONIENDO EN TRUE CUANDO LLEGUE A CADA PUNTO DE ESTOS
+        if(estadoMapa== EstadoMapa.URBANO || estadoMapa == EstadoMapa.URBANOUNIVERSIDAD){  //INTENTA PONIENDO EN TRUE CUANDO LLEGUE A CADA PUNTO DE ESTOS
             moverCarroLujo();
+            moverAves();
         }
         if(estadoMapa== EstadoMapa.UNIVERSIDAD){
             moverCarritoGolf();
+            moverAves();
         }
         if (estadoMapa == EstadoMapa.SALONES){
             moverLamparas();
@@ -984,6 +1056,13 @@ Encargado de verificar cualquier colision
         //moverPajaro();
         //etc
         */
+    }
+
+    private void moverAves() {
+        for (Ave ave : arrEnemigoAve) {
+            ave.render(batch);
+            ave.moverIzquierda();
+        }
     }
 
 
