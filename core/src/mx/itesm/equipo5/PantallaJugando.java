@@ -138,6 +138,10 @@ public class PantallaJugando extends Pantalla {
     private RayoEmprendedor rayo;
     private Texture texturaRayoEmprendedor;
 
+    private Array<Tarea> arrTarea;
+    private Tarea tarea;
+    private Texture texturaTarea;
+
 
     //Sirve para tomar items correctamente
     private float tiempoInmunidadItem=0f;
@@ -200,12 +204,23 @@ public class PantallaJugando extends Pantalla {
         crearAudio();
         crearCorazones();
         crearEnemigos();
-        crearItemCorazon();
-        crearItemRayoEm();
+        crearItems();
+
         marcador();
         //Boton de pausa
         btnPausa=new Texture("pantallaJugando/botonPausa.png");
         Gdx.input.setInputProcessor(new ProcesadorEntrada());
+    }
+
+    private void crearItems() {
+        crearItemCorazon();
+        crearItemRayoEm();
+        crearTarea();
+    }
+
+    private void crearTarea() {
+        texturaTarea =new Texture("pantallaJugando/item/tarea.png");
+        arrTarea=new Array<>();
     }
 
     private void marcador() {
@@ -350,7 +365,7 @@ public class PantallaJugando extends Pantalla {
     private void crearRamiro() {                //Mejorar Ramiro
         texturaRamiroMov1= new Texture("pantallaJugando/personaje1/movRamiro2.png");//Sprite de movimientos
         texturaRamiroMov2= new Texture("pantallaJugando/personaje1/Invencible.png");//Sprite de movimientos
-        ramiro=new Ramiro(texturaRamiroMov1,texturaRamiroMov2,150,50);
+        ramiro=new Ramiro(texturaRamiroMov1,texturaRamiroMov2,250,50);
     }
 
     @Override
@@ -401,28 +416,27 @@ public class PantallaJugando extends Pantalla {
     }
 
     private void dibujarItems() {
-        //dibujarArregloCorazones();
-        //dibujarArregloRayos();
 
         timerCrearItem += Gdx.graphics.getDeltaTime();
         if (timerCrearItem>=TIEMPO_CREA_ITEM) {
             timerCrearItem = 0;
             TIEMPO_CREA_ITEM = tiempoBaseItem + MathUtils.random()*2;
-            int tipoItem=MathUtils.random(1,2);//Para que los items sean al azar
+            int tipoItem=MathUtils.random(1,3);//Para que los items sean al azar
 
             if(tipoItem==1){
                 rayo= new RayoEmprendedor(texturaRayoEmprendedor,ANCHO,120f+ MathUtils.random(0,2)*100);
                 arrRayoEmprendedor.add(rayo);
-
             }else if(tipoItem==2){
                 corazon= new Corazon(texturaItemCorazon,ANCHO,120f+ MathUtils.random(0,2)*100);
                 arrCorazonesItem.add(corazon);
+            } else if (tipoItem == 3){
+                tarea= new Tarea(texturaTarea,ANCHO,145);
+                arrTarea.add(tarea);
             }
             //Gdx.app.log("random","TipoItem :"+tipoItem);
 
         }
 
-
         for (int i = arrRayoEmprendedor.size-1; i >= 0; i--) {
             RayoEmprendedor rayo = arrRayoEmprendedor.get(i);
             if (rayo.sprite.getX() < 0- rayo.sprite.getWidth()) {
@@ -430,31 +444,19 @@ public class PantallaJugando extends Pantalla {
 
             }
         }
-        for (int i = arrRayoEmprendedor.size-1; i >= 0; i--) {
-            RayoEmprendedor rayo = arrRayoEmprendedor.get(i);
-            if (rayo.sprite.getX() < 0- rayo.sprite.getWidth()) {
-                arrRayoEmprendedor.removeIndex(i);
 
-            }
-        }
-    }
-
-    private void dibujarArregloCorazones() {
-        //Creacion de corazones
-        timerCrearItem += Gdx.graphics.getDeltaTime();
-        if (timerCrearItem>=TIEMPO_CREA_ITEM) {
-            timerCrearItem = 0;
-            TIEMPO_CREA_ITEM = tiempoBaseItem + MathUtils.random()*2;
-
-            corazon= new Corazon(texturaItemCorazon,ANCHO,120f+ MathUtils.random(0,2)*100);
-            arrCorazonesItem.add(corazon);
-        }
-
-        //Si el corazon se paso de la pantalla, lo borra
         for (int i = arrCorazonesItem.size-1; i >= 0; i--) {
-            Corazon cora = arrCorazonesItem.get(i);
-            if (cora.sprite.getX() < 0- cora.sprite.getWidth()) {
+            Corazon corazon = arrCorazonesItem.get(i);
+            if (corazon.sprite.getX() < 0- corazon.sprite.getWidth()) {
                 arrCorazonesItem.removeIndex(i);
+
+            }
+        }
+
+        for (int i = arrTarea.size-1; i >= 0; i--) {
+            Tarea tarea = arrTarea.get(i);
+            if (tarea.sprite.getX() < 0- tarea.sprite.getWidth()) {
+                arrTarea.removeIndex(i);
 
             }
         }
@@ -825,6 +827,25 @@ Encargado de verificar cualquier colision
             }
 
         }
+    //coalisiones de las tareas
+        for (int i=arrTarea.size-1; i>=0; i--) {
+            Tarea tarea = arrTarea.get(i);
+
+            if(ramiro.sprite.getBoundingRectangle().overlaps(tarea.sprite.getBoundingRectangle())){//Colision de Item
+                if(inmunidadItem!=true){// asi se evita bugs.
+                    if (puntos - 25 < 0){
+                        puntos = 0;
+                    } else {
+                        puntos-=25;
+                    }
+                    arrTarea.removeIndex(i);
+                    inmunidadItem=true;
+                }
+
+            }
+
+        }
+
 
         //Verifica colisiones de camioneta
         if(estadoMapa==EstadoMapa.RURAL || estadoMapa==EstadoMapa.RURALURBANO){
@@ -1033,7 +1054,7 @@ Encargado de verificar cualquier colision
             moverCamionetas();
             moverAves();
         }
-        if(estadoMapa== EstadoMapa.URBANO || estadoMapa == EstadoMapa.URBANOUNIVERSIDAD){  //INTENTA PONIENDO EN TRUE CUANDO LLEGUE A CADA PUNTO DE ESTOS
+        if(estadoMapa== EstadoMapa.URBANO || estadoMapa == EstadoMapa.URBANOUNIVERSIDAD){
             moverCarroLujo();
             moverAves();
         }
@@ -1046,6 +1067,7 @@ Encargado de verificar cualquier colision
             moverSillas();
         }
         actualizaPuntuacion();
+        moverTareas();
         moverItemCorazon();
         verificarColisiones();
         verificarMuerte();
@@ -1056,6 +1078,13 @@ Encargado de verificar cualquier colision
         //moverPajaro();
         //etc
         */
+    }
+
+    private void moverTareas() {
+        for (Tarea tarea : arrTarea) {
+            tarea.render(batch);
+            tarea.moverIzquierda();
+        }
     }
 
     private void moverAves() {
