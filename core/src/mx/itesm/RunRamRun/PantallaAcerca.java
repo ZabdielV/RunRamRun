@@ -1,7 +1,6 @@
-package mx.itesm.equipo5;
+package mx.itesm.RunRamRun;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,35 +12,32 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 
-/*
+public class PantallaAcerca extends Pantalla {
 
-Pantalla encargada de reproducir la historia
+    private final Juego juego;// Para hacer setScreen
 
- */
-public class PantallaStory extends Pantalla {
-    private Juego juego;
-    private int numeroEscena=1;
+    //Camara, batch, texturas, render (Dibujar), dispose
+    //Fondo
 
+    //Menu (Botones)
+    private Stage escenaMenu;//Contenedor de objetos (Botones)
 
-    private Texture texturaEscena1,texturaEscena2,texturaEscena3,texturaEscena4;
+    private Texture texturaFondo,titulo;
+
 
     //Efecto Sonido
     private Sound efectoClick;
 
-
-    private Stage escenaMenu;
-
-    public PantallaStory(Juego juego) {
+    public PantallaAcerca(Juego juego) {
         this.juego=juego;
     }
 
+
     @Override
     public void show() {
-        texturaEscena1=new Texture("pantallaAyuda/s1.png");
-        texturaEscena2=new Texture("pantallaAyuda/s2.png");
-        texturaEscena3=new Texture("pantallaAyuda/s3.png");
-        texturaEscena4=new Texture("pantallaAyuda/s4.png");
+        texturaFondo=new Texture("pantallaAcerca/fondo3.png");
 
+     //   titulo=new Texture("titulo.png");
         crearMenu();
         crearAudio();
     }
@@ -50,7 +46,7 @@ public class PantallaStory extends Pantalla {
         AssetManager manager=new AssetManager();
         manager.load("sounds/Click.mp3",Sound.class);
 
-        manager.finishLoading();
+        manager.finishLoading();//Espera a cargar todos los recursos
         efectoClick=manager.get("sounds/Click.mp3");
     }
 
@@ -61,33 +57,18 @@ public class PantallaStory extends Pantalla {
         TextureRegionDrawable trdBtnRegresar=new TextureRegionDrawable(new TextureRegion(texturaBtnRegresar));
 
         ImageButton btnRegresar=new ImageButton(trdBtnRegresar);
-        btnRegresar.setPosition(ANCHO*0.1f,ALTO*0.1f, Align.center);
+        btnRegresar.setPosition(btnRegresar.getWidth(),btnRegresar.getHeight(), Align.center);
         //Programar el evento de click
         btnRegresar.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 efectoClick.play();
-                juego.setScreen(new PantallaAyuda(juego));
+                //Cambiamos de pantalla (el objeto juego, setScreen)
+                juego.setScreen(new PantallaMenu(juego));
             }
         });
-        //btnNext
-        Texture texturaBtnNext  =new Texture("pantallaAyuda/next.png");
-        TextureRegionDrawable trdBtnNext=new TextureRegionDrawable(new TextureRegion(texturaBtnNext));
 
-        ImageButton btnNext=new ImageButton(trdBtnNext);
-        btnNext.setPosition(ANCHO-50,ALTO*0.45f,Align.center);
-        //Programar el evento de click
-        btnNext.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                super.clicked(event, x, y);
-                efectoClick.play();
-
-                numeroEscena++;
-            }
-        });
-        escenaMenu.addActor(btnNext);
         escenaMenu.addActor(btnRegresar);
         Gdx.input.setInputProcessor(escenaMenu);
     }
@@ -99,24 +80,10 @@ public class PantallaStory extends Pantalla {
         batch.setProjectionMatrix(camara.combined);
 
         batch.begin();
-        organizarEscenas();
-
+        batch.draw(texturaFondo,0,0);
+     //   batch.draw(titulo,ANCHO/2-(titulo.getWidth()/2),ALTO-100);
         batch.end();
         escenaMenu.draw();
-
-    }
-
-    private void organizarEscenas() {
-        if(numeroEscena==1)
-            batch.draw(texturaEscena1,0,0);
-        else if(numeroEscena==2){
-            batch.draw(texturaEscena2,0,0);
-        }
-        else if(numeroEscena==3){
-            batch.draw(texturaEscena3,0,0);
-        }else {
-            batch.draw(texturaEscena4,0,0);
-        }
     }
 
     @Override
@@ -131,10 +98,8 @@ public class PantallaStory extends Pantalla {
 
     @Override
     public void dispose() {
-        texturaEscena1.dispose();
-        texturaEscena2.dispose();
-        texturaEscena3.dispose();
-        texturaEscena4.dispose();
+        texturaFondo.dispose();
+       // titulo.dispose();
         batch.dispose();
     }
 }

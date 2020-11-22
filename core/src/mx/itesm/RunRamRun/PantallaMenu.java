@@ -1,4 +1,4 @@
-package mx.itesm.equipo5;
+package mx.itesm.RunRamRun;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
@@ -101,7 +101,7 @@ public class PantallaMenu extends Pantalla {
                 super.clicked(event, x, y);
                 efectoClick.play();
                 //Cambiamos de pantalla (el objeto juego, setScreen)
-                juego.setScreen(new PantallaCargando(juego, new PantallaJugando(juego)));
+                juego.setScreen(new PantallaCargando(juego, Pantallas.JUGANDO));
             }
         });
 

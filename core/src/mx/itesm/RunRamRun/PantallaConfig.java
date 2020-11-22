@@ -1,18 +1,20 @@
-package mx.itesm.equipo5;
+package mx.itesm.RunRamRun;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 
-public class PantallaAyuda extends Pantalla {
+public class PantallaConfig extends Pantalla{
     private final Juego juego;// Para hacer setScreen
 
     //Camara, batch, texturas, render (Dibujar), dispose
@@ -22,28 +24,32 @@ public class PantallaAyuda extends Pantalla {
     private Stage escenaMenu;//Contenedor de objetos (Botones)
 
     private Texture texturaFondo,titulo;
+    private Preferences prefs;
+    private boolean musicPreference;
+
 
     //Efecto Sonido
     private Sound efectoClick;
 
-
-    public PantallaAyuda(Juego juego) {
+    public PantallaConfig(Juego juego) {
         this.juego=juego;
     }
 
 
     @Override
     public void show() {
-        texturaFondo=new Texture("pantallaAyuda/fondo.png");
+        texturaFondo=new Texture("pantallaConfig/fondo.png");
 
-        // titulo=new Texture("titulo.png");
+        /*Cargar preferencias*/
+        prefs=Gdx.app.getPreferences("music");
+        musicPreference=prefs.getBoolean("music",true);
+        //titulo=new Texture("titulo.png");
         crearMenu();
         crearAudio();
+        Gdx.app.log("prefe","preferencias al inicio: "+musicPreference);
     }
 
     private void crearAudio() {
-        //Cargar preferencias
-        //Preguntar si la preferencia de sonido es true
         AssetManager manager=new AssetManager();
         manager.load("sounds/Click.mp3",Sound.class);
 
@@ -57,7 +63,7 @@ public class PantallaAyuda extends Pantalla {
         Texture texturaBtnRegresar  =new Texture("botonesMenu/btnRegreso.png");
         TextureRegionDrawable trdBtnRegresar=new TextureRegionDrawable(new TextureRegion(texturaBtnRegresar));
 
-        ImageButton btnRegresar=new ImageButton(trdBtnRegresar);
+        final ImageButton btnRegresar=new ImageButton(trdBtnRegresar);
         btnRegresar.setPosition(btnRegresar.getWidth(),btnRegresar.getHeight(), Align.center);
         //Programar el evento de click
         btnRegresar.addListener(new ClickListener() {
@@ -69,24 +75,55 @@ public class PantallaAyuda extends Pantalla {
                 juego.setScreen(new PantallaMenu(juego));
             }
         });
+        //Boton de Musica
 
+        Texture texturaBtnM  =new Texture("pantallaConfig/onn.png");
+        TextureRegionDrawable trdBtnM=new TextureRegionDrawable(new TextureRegion(texturaBtnM));
 
-        Texture texturaBtnStory  =new Texture("pantallaAyuda/story.png");
-        TextureRegionDrawable trdBtnStory =new TextureRegionDrawable(new TextureRegion(texturaBtnStory));
+        Texture texturaBtnMOff  =new Texture("pantallaConfig/offf.png");
 
-        ImageButton btnStory =new ImageButton(trdBtnStory);
-        btnStory.setPosition(ANCHO*0.49f,ALTO*0.1f, Align.center);
-        //Programar el evento de click
-        btnStory.addListener(new ClickListener() {
+        TextureRegionDrawable trdBtnMOff=new TextureRegionDrawable(new TextureRegion(texturaBtnMOff));
+        final Button.ButtonStyle estilo1=new Button.ButtonStyle(trdBtnM,null,null);
+        final Button.ButtonStyle estilo2=new Button.ButtonStyle(trdBtnMOff,null,null);
+        final ImageButton.ImageButtonStyle estiloPrendido=new ImageButton.ImageButtonStyle(estilo1);
+        final ImageButton.ImageButtonStyle estiloApagado=new ImageButton.ImageButtonStyle(estilo2);
+        final ImageButton btnM=new ImageButton(trdBtnM);
+
+        if(musicPreference){
+            btnM.setStyle(estiloPrendido);
+        }
+        if(!musicPreference) {
+            btnM.setStyle(estiloApagado);
+        }
+
+        btnM.setPosition(ANCHO*0.3f,ALTO*0.35f);
+        btnM.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 super.clicked(event, x, y);
                 efectoClick.play();
-                juego.setScreen(new PantallaStory(juego));
+                if(musicPreference){
+                    btnM.setStyle(estiloApagado);
+                    prefs.putBoolean("music",false);
+                    musicPreference=false;
+
+
+                }
+                else {
+                    btnM.setStyle(estiloPrendido);
+                    prefs.putBoolean("music",true);
+                    musicPreference=true;
+                }
+                prefs.flush();
+                Gdx.app.log("prefe","preferencias al tocar boton: "+prefs.getBoolean("music"));
+
             }
         });
-        escenaMenu.addActor(btnStory);
+
+        escenaMenu.addActor(btnM);
+
         escenaMenu.addActor(btnRegresar);
+
         Gdx.input.setInputProcessor(escenaMenu);
     }
 
@@ -98,7 +135,7 @@ public class PantallaAyuda extends Pantalla {
 
         batch.begin();
         batch.draw(texturaFondo,0,0);
-        //batch.draw(titulo,ANCHO/2-(titulo.getWidth()/2),ALTO-100);
+        // batch.draw(titulo,ANCHO/2-(titulo.getWidth()/2),ALTO-100);
         batch.end();
         escenaMenu.draw();
     }

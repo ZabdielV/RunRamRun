@@ -1,9 +1,8 @@
-package mx.itesm.equipo5;
+package mx.itesm.RunRamRun;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -38,7 +37,7 @@ public class PantallaJugando extends Pantalla {
     private int vidasMaximas=4;
 
     //Personaje Ramiro
-    private mx.itesm.equipo5.Ramiro ramiro;
+    private mx.itesm.RunRamRun.Ramiro ramiro;
     private Texture texturaRamiroMov1;
     private Texture texturaRamiroMov2;
     private float tiempoInmunidadRamiro=0;
@@ -188,8 +187,8 @@ public class PantallaJugando extends Pantalla {
     private float tiempoBase = 2.5f;
     //Cada cuanto tiempo aparece un item:Frecuencia
     private float timerCrearItem;
-    private float TIEMPO_CREA_ITEM = 15.0f;    // VARIABLE
-    private float tiempoBaseItem = 15.0f;
+    private float TIEMPO_CREA_ITEM = 12.0f;    // VARIABLE
+    private float tiempoBaseItem = 12.0f;
 
     public PantallaJugando(Juego juego){
         this.juego = juego;
@@ -208,7 +207,7 @@ public class PantallaJugando extends Pantalla {
 
         marcador();
         //Boton de pausa
-        btnPausa=new Texture("pantallaJugando/botonPausa.png");
+        btnPausa=juego.getManager().get("pantallaJugando/botonPausa.png");
         Gdx.input.setInputProcessor(new ProcesadorEntrada());
     }
 
@@ -219,7 +218,7 @@ public class PantallaJugando extends Pantalla {
     }
 
     private void crearTarea() {
-        texturaTarea =new Texture("pantallaJugando/item/tarea.png");
+        texturaTarea =juego.getManager().get("pantallaJugando/item/tarea.png");
         arrTarea=new Array<>();
     }
 
@@ -237,7 +236,7 @@ public class PantallaJugando extends Pantalla {
     }
 
     private void crearItemRayoEm() {
-        texturaRayoEmprendedor =new Texture("pantallaJugando/item/rayo.png");
+        texturaRayoEmprendedor =juego.getManager().get("pantallaJugando/item/rayo.png");
         arrRayoEmprendedor=new Array<>();
 
     }
@@ -250,19 +249,19 @@ public class PantallaJugando extends Pantalla {
 
     }
     private void crearItemCorazon() {
-        texturaItemCorazon =new Texture("pantallaJugando/corazon.png");
+        texturaItemCorazon =juego.getManager().get("pantallaJugando/corazon.png");
         arrCorazonesItem=new Array<>();
     }
 
     private void crearEnemigos() {
         //Inicializa texturas
-        texturaCamioneta = new Texture("pantallaJugando/Enemigos/camioneta.png");
-        texturaCocheLujo = new Texture("pantallaJugando/Enemigos/carro.png");
+        texturaCamioneta = juego.getManager().get("pantallaJugando/Enemigos/camioneta.png");
+        texturaCocheLujo = juego.getManager().get("pantallaJugando/Enemigos/carro.png");
         texturaCarritoGolf = new Texture("pantallaJugando/Enemigos/carroTec.png");
 
-        texturaLampara= new Texture("pantallaJugando/Enemigos/lampara.png");
-        texturaSilla= new Texture("pantallaJugando/Enemigos/Silla.png");
-        texturaAve= new Texture("pantallaJugando/Enemigos/pajaro.png");
+        texturaLampara= juego.getManager().get("pantallaJugando/Enemigos/lampara.png");
+        texturaSilla= juego.getManager().get("pantallaJugando/Enemigos/Silla.png");
+        texturaAve= juego.getManager().get("pantallaJugando/Enemigos/pajaro.png");
 
 
             //Inicializa areglos
@@ -278,46 +277,35 @@ public class PantallaJugando extends Pantalla {
     private void crearCorazones() {
         arrCorazones=new Array<>(vidasMaximas);
         for (int i = 0; i <vidasMaximas ; i++) {
-            Texture corazones=new Texture("pantallaJugando/corazon.png");
+            Texture corazones=juego.getManager().get("pantallaJugando/corazon.png");
             arrCorazones.add(corazones);
         }
 
     }
 
     private void crearAudio() {
-        AssetManager manager=new AssetManager();
-
-        manager.load("sounds/Gameplay.mp3",Music.class);
-        manager.load("sounds/Invincibility.mp3",Music.class);
-        manager.load("sounds/Click.mp3",Sound.class);
-        manager.load("sounds/Salto.mp3",Sound.class);
-        manager.load("sounds/Muerte.mp3",Sound.class);
-        manager.load("sounds/gameOver.mp3",Sound.class);
-        manager.load("sounds/Coin2.mp3",Sound.class);
-
-        manager.finishLoading();//Espera a cargar todos los recursos
 
         //Carga las preferencias
         cargarPreferencias();
 
         //Musica
-        musicaFondo = manager.get("sounds/Gameplay.mp3");
+        musicaFondo = juego.getManager().get("sounds/Gameplay.mp3");
         musicaFondo.setVolume(0.8f);
         musicaFondo.setLooping(true);
         if(music){
             musicaFondo.play();
         }
-        musicaRayo = manager.get("sounds/Invincibility.mp3");
+        musicaRayo = juego.getManager().get("sounds/Invincibility.mp3");
         musicaRayo.setVolume(0.5f);
         musicaRayo.setLooping(true);
 
         //Efectos
-        efectoClick=manager.get("sounds/Click.mp3");
-        efetoSalto=manager.get("sounds/Salto.mp3");
-        efectoDamage=manager.get("sounds/Muerte.mp3");
-        efectoGameOver=manager.get("sounds/gameOver.mp3");
+        efectoClick=juego.getManager().get("sounds/Click.mp3");
+        efetoSalto=juego.getManager().get("sounds/Salto.mp3");
+        efectoDamage=juego.getManager().get("sounds/Muerte.mp3");
+        efectoGameOver=juego.getManager().get("sounds/gameOver.mp3");
         efectoGameOver.setVolume(1,0.05f);
-        efectoItem=manager.get("sounds/Coin2.mp3");
+        efectoItem=juego.getManager().get("sounds/Coin2.mp3");
 
     }
 
@@ -327,33 +315,33 @@ public class PantallaJugando extends Pantalla {
 
     private void crearFondos() {
         //Mapas Rural
-        texturaFondo1_1 =new Texture("pantallaJugando/Mapas/Rural/nivelRural1_1.png");
-        texturaFondo1_2 =new Texture("pantallaJugando/Mapas/Rural/nivelRural1_2.png");
-        texturaFondo1_3=new Texture("pantallaJugando/Mapas/Rural/nivelRural1_3.png");
-        texturaFondo1_4 =new Texture("pantallaJugando/Mapas/Rural/nivelRural1_4.png");
-        texturaFondo1_5 =new Texture("pantallaJugando/Mapas/Rural/nivelRural1_5.png");
+        texturaFondo1_1 =juego.getManager().get("pantallaJugando/Mapas/Rural/nivelRural1_1.png");
+        texturaFondo1_2 =juego.getManager().get("pantallaJugando/Mapas/Rural/nivelRural1_2.png");
+        texturaFondo1_3=juego.getManager().get("pantallaJugando/Mapas/Rural/nivelRural1_3.png");
+        texturaFondo1_4 =juego.getManager().get("pantallaJugando/Mapas/Rural/nivelRural1_4.png");
+        texturaFondo1_5 =juego.getManager().get("pantallaJugando/Mapas/Rural/nivelRural1_5.png");
         //Mapas Urbano
-        texturaFondo2_1=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_1.png");
-        texturaFondo2_2=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_2.png");
-        texturaFondo2_3=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_3.png");
-        texturaFondo2_4=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_4.png");
-        texturaFondo2_5=new Texture("pantallaJugando/Mapas/Urbano/Urbano2_5.png");
+        texturaFondo2_1=juego.getManager().get("pantallaJugando/Mapas/Urbano/Urbano2_1.png");
+        texturaFondo2_2=juego.getManager().get("pantallaJugando/Mapas/Urbano/Urbano2_2.png");
+        texturaFondo2_3=juego.getManager().get("pantallaJugando/Mapas/Urbano/Urbano2_3.png");
+        texturaFondo2_4=juego.getManager().get("pantallaJugando/Mapas/Urbano/Urbano2_4.png");
+        texturaFondo2_5=juego.getManager().get("pantallaJugando/Mapas/Urbano/Urbano2_5.png");
         //Mapas Universidad
-        texturaFondo3_1=new Texture("pantallaJugando/Mapas/Universidad/Universidad3_1.png");
-        texturaFondo3_2=new Texture("pantallaJugando/Mapas/Universidad/Universidad3_2.png");
-        texturaFondo3_3=new Texture("pantallaJugando/Mapas/Universidad/Universidad3_3.png");
-        texturaFondo3_4=new Texture("pantallaJugando/Mapas/Universidad/Universidad3_4.png");
-        texturaFondo3_5=new Texture("pantallaJugando/Mapas/Universidad/Universidad3_5.png");
+        texturaFondo3_1=juego.getManager().get("pantallaJugando/Mapas/Universidad/Universidad3_1.png");
+        texturaFondo3_2=juego.getManager().get("pantallaJugando/Mapas/Universidad/Universidad3_2.png");
+        texturaFondo3_3=juego.getManager().get("pantallaJugando/Mapas/Universidad/Universidad3_3.png");
+        texturaFondo3_4=juego.getManager().get("pantallaJugando/Mapas/Universidad/Universidad3_4.png");
+        texturaFondo3_5=juego.getManager().get("pantallaJugando/Mapas/Universidad/Universidad3_5.png");
         //Mapas Salones
-        texturaFondo4_1=new Texture("pantallaJugando/Mapas/Salones/Salones4_1.png");
-        texturaFondo4_2=new Texture("pantallaJugando/Mapas/Salones/Salones4_2.png");
-        texturaFondo4_3=new Texture("pantallaJugando/Mapas/Salones/Salones4_3.png");
-        texturaFondo4_4=new Texture("pantallaJugando/Mapas/Salones/Salones4_4.png");
-        texturaFondo4_5=new Texture("pantallaJugando/Mapas/Salones/Salones4_5.png");
+        texturaFondo4_1=juego.getManager().get("pantallaJugando/Mapas/Salones/Salones4_1.png");
+        texturaFondo4_2=juego.getManager().get("pantallaJugando/Mapas/Salones/Salones4_2.png");
+        texturaFondo4_3=juego.getManager().get("pantallaJugando/Mapas/Salones/Salones4_3.png");
+        texturaFondo4_4=juego.getManager().get("pantallaJugando/Mapas/Salones/Salones4_4.png");
+        texturaFondo4_5=juego.getManager().get("pantallaJugando/Mapas/Salones/Salones4_5.png");
         //Transiciones
-        texturaRuralUrbano= new Texture("pantallaJugando/Mapas/Transiciones/ruralUrbano.png");
-        texturaUrbanoUniversidad= new Texture("pantallaJugando/Mapas/Transiciones/urbanaUniversidad.png");
-        texturaUniversidadSalones= new Texture("pantallaJugando/Mapas/Transiciones/universidadSalones.png");
+        texturaRuralUrbano= juego.getManager().get("pantallaJugando/Mapas/Transiciones/ruralUrbano.png");
+        texturaUrbanoUniversidad= juego.getManager().get("pantallaJugando/Mapas/Transiciones/urbanaUniversidad.png");
+        texturaUniversidadSalones=juego.getManager().get("pantallaJugando/Mapas/Transiciones/universidadSalones.png");
 
     }
 
@@ -365,9 +353,9 @@ public class PantallaJugando extends Pantalla {
     }
 
     private void crearRamiro() {                //Mejorar Ramiro
-        texturaRamiroMov1= new Texture("pantallaJugando/personaje1/movRamiro2.png");//Sprite de movimientos
-        texturaRamiroMov2= new Texture("pantallaJugando/personaje1/Invencible.png");//Sprite de movimientos
-        ramiro=new Ramiro(texturaRamiroMov1,texturaRamiroMov2,250,50);
+        texturaRamiroMov1= juego.getManager().get("pantallaJugando/personaje1/movRamiro2.png");//Sprite de movimientos
+        texturaRamiroMov2= juego.getManager().get("pantallaJugando/personaje1/Invencible.png");//Sprite de movimientos
+        ramiro=new Ramiro(texturaRamiroMov1,texturaRamiroMov2,300,50);
     }
 
     @Override
@@ -754,6 +742,10 @@ public class PantallaJugando extends Pantalla {
             vidas++;
         }
     }
+    private void agregarPuntos() {
+        efectoItem.play();
+        puntos+=50;
+    }
     private void inmunidadRamiro() {
         efectoItem.play();
         ramiro.setEstadoItem(Ramiro.EstadoItem.INMUNE);
@@ -835,11 +827,7 @@ Encargado de verificar cualquier colision
 
             if(ramiro.sprite.getBoundingRectangle().overlaps(tarea.sprite.getBoundingRectangle())){//Colision de Item
                 if(inmunidadItem!=true){// asi se evita bugs.
-                    if (puntos - 25 < 0){
-                        puntos = 0;
-                    } else {
-                        puntos-=25;
-                    }
+                    agregarPuntos();
                     arrTarea.removeIndex(i);
                     inmunidadItem=true;
                 }
@@ -991,6 +979,8 @@ Encargado de verificar cualquier colision
 
 
     }
+
+
 
     private void moverCamionetas() {//Encargado de dibujar y mover las camionetas
         for (Camioneta cam : arrEnemigosCamioneta) {
@@ -1220,13 +1210,75 @@ Encargado de verificar cualquier colision
 
     @Override
     public void dispose() {
-        texturaFondoApoyo.dispose();
-        texturaFondoBase.dispose();
-        musicaFondo.dispose();
-        efetoSalto.dispose();
-        efectoClick.dispose();
-        efectoGameOver.dispose();
-        musicaRayo.dispose();
+        juego.getManager().unload("pantallaJugando/botonPausa.png");
+        juego.getManager().unload("pantallaJugando/item/tarea.png");
+        juego.getManager().unload("pantallaJugando/item/rayo.png");
+        juego.getManager().unload("pantallaJugando/corazon.png");
+        juego.getManager().unload("pantallaJugando/Enemigos/camioneta.png");
+        juego.getManager().unload("pantallaJugando/Enemigos/carro.png");
+        juego.getManager().unload("pantallaJugando/Enemigos/carroTec.png");
+        juego.getManager().unload("pantallaJugando/Enemigos/lampara.png");
+        juego.getManager().unload("pantallaJugando/Enemigos/Silla.png");
+        juego.getManager().unload("pantallaJugando/Enemigos/pajaro.png");
+        juego.getManager().unload("pantallaJugando/corazon.png");
+
+
+        //Mapas Rural
+        juego.getManager().unload("pantallaJugando/Mapas/Rural/nivelRural1_1.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Rural/nivelRural1_2.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Rural/nivelRural1_3.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Rural/nivelRural1_4.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Rural/nivelRural1_5.png");
+        //Mapas Urbano
+        juego.getManager().unload("pantallaJugando/Mapas/Urbano/Urbano2_1.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Urbano/Urbano2_2.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Urbano/Urbano2_3.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Urbano/Urbano2_4.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Urbano/Urbano2_5.png");
+        //Mapas Universidad
+        juego.getManager().unload("pantallaJugando/Mapas/Universidad/Universidad3_1.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Universidad/Universidad3_2.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Universidad/Universidad3_3.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Universidad/Universidad3_4.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Universidad/Universidad3_5.png");
+        //Mapas Salones
+        juego.getManager().unload("pantallaJugando/Mapas/Salones/Salones4_1.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Salones/Salones4_2.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Salones/Salones4_3.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Salones/Salones4_4.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Salones/Salones4_5.png");
+
+        //Transiciones
+        juego.getManager().unload("pantallaJugando/Mapas/Transiciones/ruralUrbano.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Transiciones/urbanaUniversidad.png");
+        juego.getManager().unload("pantallaJugando/Mapas/Transiciones/universidadSalones.png");
+
+
+        //Ramiro
+        juego.getManager().unload("pantallaJugando/personaje1/movRamiro2.png");
+        juego.getManager().unload("pantallaJugando/personaje1/Invencible.png");
+
+
+        //Sonid y music
+        juego.getManager().unload("sounds/Gameplay.mp3");
+        juego.getManager().unload("sounds/Invincibility.mp3");
+        juego.getManager().unload("sounds/Click.mp3");
+        juego.getManager().unload("sounds/Salto.mp3");
+        juego.getManager().unload("sounds/Muerte.mp3");
+        juego.getManager().unload("sounds/gameOver.mp3");
+        juego.getManager().unload("sounds/Coin2.mp3");
+
+
+        //Pantalla Pausa
+        juego.getManager().unload("pantallaPausa/Pausa.png");
+        juego.getManager().unload("pantallaPausa/Cont.png");
+        juego.getManager().unload("pantallaPausa/Reset.png");
+        juego.getManager().unload("pantallaPausa/Salir.png");
+
+        //Pantalla Muerte/Game Over
+        juego.getManager().unload("pantallaGameOver/gg.png");
+
+
     }
 
     private class ProcesadorEntrada implements InputProcessor {
@@ -1318,7 +1370,7 @@ Encargado de verificar cualquier colision
         super(vista,batch);
 
 
-        pausa=new Texture("pantallaPausa/Pausa.png");
+        pausa=juego.getManager().get("pantallaPausa/Pausa.png");
 
         Pixmap pixmap=new Pixmap((int)(ANCHO*0.85f),(int)(0.8f*ALTO), Pixmap.Format.RGBA8888);
         pixmap.setColor(0,0,0,0.5f);
@@ -1331,7 +1383,7 @@ Encargado de verificar cualquier colision
         this.addActor(imgPausa);
 
         //Boton de Continuar
-        Texture texturaContinuar=new Texture("pantallaPausa/Cont.png");
+        Texture texturaContinuar=juego.getManager().get("pantallaPausa/Cont.png");
         TextureRegionDrawable regionCont=new TextureRegionDrawable(new TextureRegion(texturaContinuar));
         ImageButton btnContinuar=new ImageButton(regionCont);
         btnContinuar.setPosition(640,ALTO-200, Align.center);
@@ -1353,7 +1405,7 @@ Encargado de verificar cualquier colision
         });
         this.addActor(btnContinuar);
         //Boton reiniciar
-        Texture texturaReset=new Texture("pantallaPausa/Reset.png");
+        Texture texturaReset=juego.getManager().get("pantallaPausa/Reset.png");
         TextureRegionDrawable regionReset=new TextureRegionDrawable(new TextureRegion(texturaReset));
         ImageButton btnReset=new ImageButton(regionReset);
         btnReset.setPosition(640,ALTO-357, Align.center);
@@ -1366,13 +1418,14 @@ Encargado de verificar cualquier colision
 
                 ///////////////////Implementar reinicio de variables en caso de ser necesario. ////////////////////////
                 Gdx.input.setInputProcessor(new ProcesadorEntrada());
-                juego.setScreen(new PantallaJugando(juego));
+                juego.setScreen(new PantallaCargando(juego, Pantallas.JUGANDO));
+
             }
         });
         this.addActor(btnReset);
 
         //Boton de Salir
-        Texture texturaSalir=new Texture("pantallaPausa/Salir.png");
+        Texture texturaSalir=juego.getManager().get("pantallaPausa/Salir.png");
         TextureRegionDrawable regionSalir=new TextureRegionDrawable(new TextureRegion(texturaSalir));
         ImageButton btnSalir=new ImageButton(regionSalir);
         btnSalir.setPosition(640,ALTO-513, Align.center);
@@ -1398,7 +1451,7 @@ Encargado de verificar cualquier colision
 
         public EscenaMuerte(Viewport vista, SpriteBatch batch){
             super(vista,batch);
-            GameOver=new Texture("pantallaGameOver/gg.png");
+            GameOver=juego.getManager().get("pantallaGameOver/gg.png");
             texto=new Texto("game.fnt");
 
             Pixmap pixmap=new Pixmap((int)(ANCHO*0.85f),(int)(0.8f*ALTO), Pixmap.Format.RGBA8888);
@@ -1414,7 +1467,7 @@ Encargado de verificar cualquier colision
 
 
             //Boton reiniciar
-            Texture texturaReset=new Texture("pantallaPausa/Reset.png");
+            Texture texturaReset=juego.getManager().get("pantallaPausa/Reset.png");
             TextureRegionDrawable regionReset=new TextureRegionDrawable(new TextureRegion(texturaReset));
             ImageButton btnReset=new ImageButton(regionReset);
             btnReset.setPosition(640,ALTO-357, Align.center);
@@ -1427,13 +1480,13 @@ Encargado de verificar cualquier colision
 
                     ///////////////////Implementar reinicio de variables en caso de ser necesario. ////////////////////////
                     Gdx.input.setInputProcessor(new ProcesadorEntrada());
-                    juego.setScreen(new PantallaJugando(juego));
+                    juego.setScreen(new PantallaCargando(juego, Pantallas.JUGANDO));
                 }
             });
             this.addActor(btnReset);
 
             //Boton de Salir
-            Texture texturaSalir=new Texture("pantallaPausa/Salir.png");
+            Texture texturaSalir=juego.getManager().get("pantallaPausa/Salir.png");
             TextureRegionDrawable regionSalir=new TextureRegionDrawable(new TextureRegion(texturaSalir));
             ImageButton btnSalir=new ImageButton(regionSalir);
             btnSalir.setPosition(640,ALTO-513, Align.center);

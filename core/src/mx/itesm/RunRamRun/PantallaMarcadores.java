@@ -1,6 +1,7 @@
-package mx.itesm.equipo5;
+package mx.itesm.RunRamRun;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -12,7 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 
-public class PantallaAcerca extends Pantalla {
+public class PantallaMarcadores extends Pantalla {
 
     private final Juego juego;// Para hacer setScreen
 
@@ -28,21 +29,52 @@ public class PantallaAcerca extends Pantalla {
     //Efecto Sonido
     private Sound efectoClick;
 
-    public PantallaAcerca(Juego juego) {
+    //Preferencias
+    private Preferences marc1;
+    private Preferences marc2;
+    private Preferences marc3;
+    private int puntos1;
+    private int puntos2;
+    private int puntos3;
+
+    //Texto
+    private Texto texto;
+
+    public PantallaMarcadores(Juego juego) {
         this.juego=juego;
     }
 
 
     @Override
     public void show() {
-        texturaFondo=new Texture("pantallaAcerca/fondo3.png");
+        texturaFondo=new Texture("pantallaMarca/fondo.png");
 
-     //   titulo=new Texture("titulo.png");
+
         crearMenu();
         crearAudio();
+        crearTexto();
+        cargarPreferencias();
+    }
+
+    private void cargarPreferencias() {
+        /*Cargar preferencias*/
+        marc1=Gdx.app.getPreferences("m1");
+        puntos1=marc1.getInteger("m1",0);
+
+        marc2=Gdx.app.getPreferences("m2");
+        puntos2=marc2.getInteger("m2",0);
+
+        marc3=Gdx.app.getPreferences("m3");
+        puntos3=marc3.getInteger("m3",0);
+    }
+
+    private void crearTexto() {
+        texto=new Texto("game.fnt");
     }
 
     private void crearAudio() {
+        //Cargar preferencias
+        //Preguntar si la preferencia de sonido es true
         AssetManager manager=new AssetManager();
         manager.load("sounds/Click.mp3",Sound.class);
 
@@ -81,9 +113,18 @@ public class PantallaAcerca extends Pantalla {
 
         batch.begin();
         batch.draw(texturaFondo,0,0);
-     //   batch.draw(titulo,ANCHO/2-(titulo.getWidth()/2),ALTO-100);
+       dibujarTexto();
         batch.end();
         escenaMenu.draw();
+    }
+
+    private void dibujarTexto() {
+        texto.mostrarMensaje(batch,"1",ANCHO*0.32f,ALTO*0.7f);
+        texto.mostrarMensaje(batch,"2",ANCHO*0.32f,ALTO*0.6f);
+        texto.mostrarMensaje(batch,"3",ANCHO*0.32f,ALTO*0.5f);
+        texto.mostrarMensaje(batch,""+puntos1,ANCHO*0.6f,ALTO*0.7f);
+        texto.mostrarMensaje(batch,""+puntos2,ANCHO*0.6f,ALTO*0.6f);
+        texto.mostrarMensaje(batch,""+puntos3,ANCHO*0.6f,ALTO*0.5f);
     }
 
     @Override

@@ -1,17 +1,14 @@
-package mx.itesm.equipo5;
+package mx.itesm.RunRamRun;
 
 import com.badlogic.gdx.graphics.Texture;
 
-public class Corazon extends Objeto{
+public class Tarea extends Objeto{
 
-
-    public Corazon (Texture textura, float x, float y){
+    public Tarea (Texture textura, float x, float y){
         super(textura, x, y);
     }
 
     public void moverIzquierda(){
         sprite.setX(sprite.getX()-20);
     }
-
-
 }

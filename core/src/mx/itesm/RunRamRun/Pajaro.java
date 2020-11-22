@@ -1,10 +1,10 @@
-package mx.itesm.equipo5;
+package mx.itesm.RunRamRun;
 
 import com.badlogic.gdx.graphics.Texture;
 
-public class Tarea extends Objeto{
+public class Pajaro extends Objeto{
 
-    public Tarea (Texture textura, float x, float y){
+    public Pajaro (Texture textura, float x, float y){
         super(textura, x, y);
     }
 

@@ -1,4 +1,4 @@
-package mx.itesm.equipo5;
+package mx.itesm.RunRamRun;
 
 public enum EstadoRamiro {
     CAMINADO,
