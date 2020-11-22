@@ -69,30 +69,45 @@ public class PantallaMenu extends Pantalla {
         //btnMarcadores*************
         Texture texturaBtnMarcadores=new Texture("botonesMenu/btnMarca.png");
         TextureRegionDrawable trdBtnMarcadores=new TextureRegionDrawable(new TextureRegion(texturaBtnMarcadores));
+
+        Texture texturaBtnMarcaInverso=new Texture("botonesMenu/btnMarcaInverso.png");
+        TextureRegionDrawable trdBtnMarcaInverso=new TextureRegionDrawable(new TextureRegion(texturaBtnMarcaInverso));
         //Inicializar boton Marcadores
-        ImageButton btnMarcadores=new ImageButton(trdBtnMarcadores);
+        ImageButton btnMarcadores=new ImageButton(trdBtnMarcadores,trdBtnMarcaInverso);
         btnMarcadores.setPosition(ANCHO/2,ALTO-340, Align.center);
 
-        //btnAcercaDe
-        Texture texturaBtnAcerca =new Texture("botonesMenu/btnAcerca.png");
+        //btnAbout
+        Texture texturaBtnAcerca =new Texture("botonesMenu/btnAbout.png");
         TextureRegionDrawable trdBtnAcerca=new TextureRegionDrawable(new TextureRegion(texturaBtnAcerca));
-        //Inicializar boton AcercaDe
-        ImageButton btnAcerca=new ImageButton(trdBtnAcerca);
-        btnAcerca.setPosition(ANCHO/2,ALTO-500, Align.center);
+
+        Texture texturaBtnAboutInverso=new Texture("botonesMenu/btnAboutInverso.png");
+        TextureRegionDrawable trdBtnAboutInverso=new TextureRegionDrawable(new TextureRegion(texturaBtnAboutInverso));
+
+        //Inicializar boton About
+        ImageButton btnAcerca=new ImageButton(trdBtnAcerca,trdBtnAboutInverso);
+        btnAcerca.setPosition(texturaBtnAcerca.getWidth(),texturaBtnAcerca.getHeight(), Align.center);
 
         //btnConfig
         Texture texturaBtnConfig=new Texture("botonesMenu/btnConfig.png");
         TextureRegionDrawable trdBtnConfig=new TextureRegionDrawable(new TextureRegion(texturaBtnConfig));
+
+        Texture texturaBtnConfigInverso=new Texture("botonesMenu/btnConfigInverso.png");
+        TextureRegionDrawable trdBtnConfigInverso=new TextureRegionDrawable(new TextureRegion(texturaBtnConfigInverso));
+
         //Inicializar boton Config
-        ImageButton btnConfig=new ImageButton(trdBtnConfig);
+        ImageButton btnConfig=new ImageButton(trdBtnConfig,trdBtnConfigInverso);
         btnConfig.setPosition(ANCHO-texturaBtnConfig.getWidth(),texturaBtnConfig.getHeight(), Align.center);
 
-        //btnAyuda
-        Texture texturaBtnAyuda=new Texture("botonesMenu/btnAyuda.png");
+        //btnHowToPlay
+        Texture texturaBtnAyuda=new Texture("botonesMenu/btnHow.png");
         TextureRegionDrawable trdBtnAyuda=new TextureRegionDrawable(new TextureRegion(texturaBtnAyuda));
-        //Inicializar boton Ayuda
-        ImageButton btnAyuda=new ImageButton(trdBtnAyuda);
-        btnAyuda.setPosition(texturaBtnAyuda.getWidth(),texturaBtnAyuda.getHeight(), Align.center);
+
+        Texture texturaBtnAyudaInverso=new Texture("botonesMenu/btnHowInverso.png");
+        TextureRegionDrawable trdBtnAyudaInverso=new TextureRegionDrawable(new TextureRegion(texturaBtnAyudaInverso));
+
+        //Inicializar boton HowToPlay
+        ImageButton btnAyuda=new ImageButton(trdBtnAyuda,trdBtnAyudaInverso);
+        btnAyuda.setPosition(ANCHO*0.52f,ALTO-500, Align.center);
 
         //Programar el evento de click
         btnJugar.addListener(new ClickListener() {
@@ -160,7 +175,7 @@ public class PantallaMenu extends Pantalla {
 
         batch.begin();
         batch.draw(texturaFondo,0,0);
-        batch.draw(titulo,ANCHO/2-(titulo.getWidth()/2f),ALTO-100);
+        batch.draw(titulo,ANCHO/2-(titulo.getWidth()*0.5f),ALTO-170);
         batch.end();
         escenaMenu.draw();
 

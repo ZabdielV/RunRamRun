@@ -32,6 +32,7 @@ public class PantallaJugando extends Pantalla {
 
     //Barra de corazones: Salud
     private Array<Texture> arrCorazones;
+
     //Vidas
     private int vidas=3;
     private int vidasMaximas=4;
@@ -389,7 +390,7 @@ public class PantallaJugando extends Pantalla {
             escenaPausa.draw();
 
             batch.begin();
-            batch.draw(escenaPausa.pausa,ANCHO*0.4f,ALTO*0.90f);
+            batch.draw(escenaPausa.pausa,ANCHO*0.35f,ALTO*0.80f);
 
             batch.end();
         }
@@ -399,7 +400,7 @@ public class PantallaJugando extends Pantalla {
             batch.begin();
             int puntosInt=(int)puntos;//Puntos logrados hasta morir
             escenaMuerte.texto.mostrarMensaje(batch,"Score: "+puntosInt,ANCHO*0.5f,ALTO*0.7f);
-            batch.draw(escenaMuerte.GameOver,ANCHO*0.34f,ALTO*0.75f);
+            batch.draw(escenaMuerte.GameOver,ANCHO*0.29f,ALTO*0.75f);
             batch.end();
         }
 
@@ -1278,6 +1279,10 @@ Encargado de verificar cualquier colision
         //Pantalla Muerte/Game Over
         juego.getManager().unload("pantallaGameOver/gg.png");
 
+        //Inversos
+        juego.getManager().unload("pantallaPausa/ContInverso.png");
+        juego.getManager().unload("pantallaPausa/ResetInverso.png");
+        juego.getManager().unload("pantallaPausa/SalirInverso.png");
 
     }
 
@@ -1384,8 +1389,12 @@ Encargado de verificar cualquier colision
 
         //Boton de Continuar
         Texture texturaContinuar=juego.getManager().get("pantallaPausa/Cont.png");
+        Texture texturaContinuarInverso=juego.getManager().get("pantallaPausa/ContInverso.png");
+        TextureRegionDrawable regionContInverso=new TextureRegionDrawable(new TextureRegion(texturaContinuarInverso));
         TextureRegionDrawable regionCont=new TextureRegionDrawable(new TextureRegion(texturaContinuar));
-        ImageButton btnContinuar=new ImageButton(regionCont);
+        ImageButton btnContinuar=new ImageButton(regionCont,regionContInverso);
+
+
         btnContinuar.setPosition(640,ALTO-200, Align.center);
         btnContinuar.addListener(new ClickListener() {
             @Override
@@ -1406,8 +1415,11 @@ Encargado de verificar cualquier colision
         this.addActor(btnContinuar);
         //Boton reiniciar
         Texture texturaReset=juego.getManager().get("pantallaPausa/Reset.png");
+        Texture texturaResetInverso=juego.getManager().get("pantallaPausa/ResetInverso.png");
+        TextureRegionDrawable regionResetInverso=new TextureRegionDrawable(new TextureRegion(texturaResetInverso));
         TextureRegionDrawable regionReset=new TextureRegionDrawable(new TextureRegion(texturaReset));
-        ImageButton btnReset=new ImageButton(regionReset);
+        ImageButton btnReset=new ImageButton(regionReset,regionResetInverso);
+
         btnReset.setPosition(640,ALTO-357, Align.center);
         btnReset.addListener(new ClickListener() {
             @Override
@@ -1426,8 +1438,11 @@ Encargado de verificar cualquier colision
 
         //Boton de Salir
         Texture texturaSalir=juego.getManager().get("pantallaPausa/Salir.png");
+        Texture texturaSalirInverso=juego.getManager().get("pantallaPausa/SalirInverso.png");
+        TextureRegionDrawable regionSalirInverso=new TextureRegionDrawable(new TextureRegion(texturaSalirInverso));
+
         TextureRegionDrawable regionSalir=new TextureRegionDrawable(new TextureRegion(texturaSalir));
-        ImageButton btnSalir=new ImageButton(regionSalir);
+        ImageButton btnSalir=new ImageButton(regionSalir,regionSalirInverso);
         btnSalir.setPosition(640,ALTO-513, Align.center);
         btnSalir.addListener(new ClickListener() {
             @Override
@@ -1468,8 +1483,12 @@ Encargado de verificar cualquier colision
 
             //Boton reiniciar
             Texture texturaReset=juego.getManager().get("pantallaPausa/Reset.png");
+            Texture texturaResetInverso=juego.getManager().get("pantallaPausa/ResetInverso.png");
+            TextureRegionDrawable regionResetInverso=new TextureRegionDrawable(new TextureRegion(texturaResetInverso));
+
             TextureRegionDrawable regionReset=new TextureRegionDrawable(new TextureRegion(texturaReset));
-            ImageButton btnReset=new ImageButton(regionReset);
+            ImageButton btnReset=new ImageButton(regionReset,regionResetInverso);
+
             btnReset.setPosition(640,ALTO-357, Align.center);
             btnReset.addListener(new ClickListener() {
                 @Override
@@ -1487,8 +1506,11 @@ Encargado de verificar cualquier colision
 
             //Boton de Salir
             Texture texturaSalir=juego.getManager().get("pantallaPausa/Salir.png");
+            Texture texturaSalirInverso=juego.getManager().get("pantallaPausa/SalirInverso.png");
+            TextureRegionDrawable regionSalirInverso=new TextureRegionDrawable(new TextureRegion(texturaSalirInverso));
+
             TextureRegionDrawable regionSalir=new TextureRegionDrawable(new TextureRegion(texturaSalir));
-            ImageButton btnSalir=new ImageButton(regionSalir);
+            ImageButton btnSalir=new ImageButton(regionSalir,regionSalirInverso);
             btnSalir.setPosition(640,ALTO-513, Align.center);
             btnSalir.addListener(new ClickListener() {
                 @Override

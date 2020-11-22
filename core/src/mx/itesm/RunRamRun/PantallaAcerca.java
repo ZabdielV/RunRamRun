@@ -56,7 +56,10 @@ public class PantallaAcerca extends Pantalla {
         Texture texturaBtnRegresar  =new Texture("botonesMenu/btnRegreso.png");
         TextureRegionDrawable trdBtnRegresar=new TextureRegionDrawable(new TextureRegion(texturaBtnRegresar));
 
-        ImageButton btnRegresar=new ImageButton(trdBtnRegresar);
+        Texture texturaBtnRegresarInverso=new Texture("botonesMenu/btnRegresoInverso.png");
+        TextureRegionDrawable trdBtnRegresarInverso=new TextureRegionDrawable(new TextureRegion(texturaBtnRegresarInverso));
+
+        ImageButton btnRegresar=new ImageButton(trdBtnRegresar,trdBtnRegresarInverso);
         btnRegresar.setPosition(btnRegresar.getWidth(),btnRegresar.getHeight(), Align.center);
         //Programar el evento de click
         btnRegresar.addListener(new ClickListener() {

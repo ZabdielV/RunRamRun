@@ -128,7 +128,10 @@ public class PantallaCargando extends Pantalla {
         //Pantalla Muerte/Game Over
         manager.load("pantallaGameOver/gg.png",Texture.class);
 
-
+        //Inversos
+        manager.load("pantallaPausa/ContInverso.png",Texture.class);
+        manager.load("pantallaPausa/ResetInverso.png",Texture.class);
+        manager.load("pantallaPausa/SalirInverso.png",Texture.class);
     }
 
     @Override
