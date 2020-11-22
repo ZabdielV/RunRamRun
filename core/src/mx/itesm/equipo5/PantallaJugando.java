@@ -286,6 +286,7 @@ public class PantallaJugando extends Pantalla {
 
     private void crearAudio() {
         AssetManager manager=new AssetManager();
+
         manager.load("sounds/Gameplay.mp3",Music.class);
         manager.load("sounds/Invincibility.mp3",Music.class);
         manager.load("sounds/Click.mp3",Sound.class);
@@ -295,6 +296,7 @@ public class PantallaJugando extends Pantalla {
         manager.load("sounds/Coin2.mp3",Sound.class);
 
         manager.finishLoading();//Espera a cargar todos los recursos
+
         //Carga las preferencias
         cargarPreferencias();
 

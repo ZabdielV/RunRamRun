@@ -101,7 +101,7 @@ public class PantallaMenu extends Pantalla {
                 super.clicked(event, x, y);
                 efectoClick.play();
                 //Cambiamos de pantalla (el objeto juego, setScreen)
-                juego.setScreen(new PantallaJugando(juego));
+                juego.setScreen(new PantallaCargando(juego, new PantallaJugando(juego)));
             }
         });
 
