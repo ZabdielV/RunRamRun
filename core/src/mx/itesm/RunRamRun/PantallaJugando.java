@@ -478,10 +478,6 @@ public class PantallaJugando extends Pantalla {
             dibujarArregloAve();
         }
 
-        /*
-        IMPLEMENTAR
-        //dibujarTarea();
-         */
     }
 
     private void dibujarArregloAve() {
@@ -1546,7 +1542,4 @@ Encargado de verificar cualquier colision
         URBANOUNIVERSIDAD,
         UNIVERSIDADSALONES
     }
-
-
-
 }

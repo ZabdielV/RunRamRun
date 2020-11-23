@@ -122,12 +122,12 @@ public class PantallaMarcadores extends Pantalla {
     }
 
     private void dibujarTexto() {
-        texto.mostrarMensaje(batch,"1",ANCHO*0.32f,ALTO*0.7f);
-        texto.mostrarMensaje(batch,"2",ANCHO*0.32f,ALTO*0.6f);
-        texto.mostrarMensaje(batch,"3",ANCHO*0.32f,ALTO*0.5f);
-        texto.mostrarMensaje(batch,""+puntos1,ANCHO*0.6f,ALTO*0.7f);
-        texto.mostrarMensaje(batch,""+puntos2,ANCHO*0.6f,ALTO*0.6f);
-        texto.mostrarMensaje(batch,""+puntos3,ANCHO*0.6f,ALTO*0.5f);
+        texto.mostrarMensaje(batch,"1",ANCHO*0.33f,ALTO*0.7f);
+        texto.mostrarMensaje(batch,"2",ANCHO*0.33f,ALTO*0.6f);
+        texto.mostrarMensaje(batch,"3",ANCHO*0.33f,ALTO*0.5f);
+        texto.mostrarMensaje(batch,""+puntos1,ANCHO*0.57f,ALTO*0.7f);
+        texto.mostrarMensaje(batch,""+puntos2,ANCHO*0.57f,ALTO*0.6f);
+        texto.mostrarMensaje(batch,""+puntos3,ANCHO*0.57f,ALTO*0.5f);
     }
 
     @Override

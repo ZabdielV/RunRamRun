@@ -51,7 +51,6 @@ public class PantallaMenu extends Pantalla {
 
         manager.finishLoading();//Espera a cargar todos los recursos
         efectoClick=manager.get("sounds/Click.mp3");
-
     }
 
     private void crearMenu() {

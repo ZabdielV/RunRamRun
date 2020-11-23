@@ -74,8 +74,11 @@ public class PantallaStory extends Pantalla {
         Texture texturaBtnNext  =new Texture("pantallaAyuda/next.png");
         TextureRegionDrawable trdBtnNext=new TextureRegionDrawable(new TextureRegion(texturaBtnNext));
 
-        ImageButton btnNext=new ImageButton(trdBtnNext);
-        btnNext.setPosition(ANCHO-50,ALTO*0.45f,Align.center);
+        Texture texturaBtnNextInverso  =new Texture("pantallaAyuda/nextInverso.png");
+        TextureRegionDrawable trdBtnNextInverso=new TextureRegionDrawable(new TextureRegion(texturaBtnNextInverso));
+
+        ImageButton btnNext=new ImageButton(trdBtnNext,trdBtnNextInverso);
+        btnNext.setPosition(ANCHO-60,ALTO*0.45f,Align.center);
         //Programar el evento de click
         btnNext.addListener(new ClickListener() {
             @Override
