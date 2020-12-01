@@ -1,6 +1,7 @@
 package mx.itesm.RunRamRun;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -22,7 +23,7 @@ public class PantallaMenu extends Pantalla {
     private Stage escenaMenu;//Contenedor de objetos (Botones)
 
     //Imagenes
-    private Texture texturaFondo,titulo;
+    private Texture texturaFondo;
 
     //Efecto Sonido
     private Sound efectoClick;
@@ -35,11 +36,12 @@ public class PantallaMenu extends Pantalla {
 
     @Override
     public void show() {
-        texturaFondo=new Texture("fondoM.png");
+        texturaFondo=new Texture("fondoNuevo.png");
 
-       titulo=new Texture("titulo.png");
+       //titulo=new Texture("titulo.png");
         crearMenu();
         crearAudio();
+        Gdx.input.setCatchKey(Input.Keys.BACK,false);
     }
 
     private void crearAudio() {
@@ -63,7 +65,7 @@ public class PantallaMenu extends Pantalla {
         TextureRegionDrawable trdBtnJugarInverso=new TextureRegionDrawable(new TextureRegion(texturaBtnJugarInverso));
         //Inicializar boton Jugar
         ImageButton btnJugar=new ImageButton(trdBtnJugar,trdBtnJugarInverso);
-        btnJugar.setPosition(ANCHO/2-10,ALTO-180, Align.center);
+        btnJugar.setPosition(ANCHO/2+200,ALTO-130, Align.center);
 
         //btnMarcadores*************
         Texture texturaBtnMarcadores=new Texture("botonesMenu/btnMarca.png");
@@ -73,7 +75,7 @@ public class PantallaMenu extends Pantalla {
         TextureRegionDrawable trdBtnMarcaInverso=new TextureRegionDrawable(new TextureRegion(texturaBtnMarcaInverso));
         //Inicializar boton Marcadores
         ImageButton btnMarcadores=new ImageButton(trdBtnMarcadores,trdBtnMarcaInverso);
-        btnMarcadores.setPosition(ANCHO/2,ALTO-340, Align.center);
+        btnMarcadores.setPosition(ANCHO/2+200,ALTO-290, Align.center);
 
         //btnAbout
         Texture texturaBtnAcerca =new Texture("botonesMenu/btnAbout.png");
@@ -84,7 +86,7 @@ public class PantallaMenu extends Pantalla {
 
         //Inicializar boton About
         ImageButton btnAcerca=new ImageButton(trdBtnAcerca,trdBtnAboutInverso);
-        btnAcerca.setPosition(texturaBtnAcerca.getWidth(),texturaBtnAcerca.getHeight(), Align.center);
+        btnAcerca.setPosition(texturaBtnAcerca.getWidth(),texturaBtnAcerca.getHeight()-55, Align.center);
 
         //btnConfig
         Texture texturaBtnConfig=new Texture("botonesMenu/btnConfig.png");
@@ -95,7 +97,7 @@ public class PantallaMenu extends Pantalla {
 
         //Inicializar boton Config
         ImageButton btnConfig=new ImageButton(trdBtnConfig,trdBtnConfigInverso);
-        btnConfig.setPosition(ANCHO-texturaBtnConfig.getWidth(),texturaBtnConfig.getHeight(), Align.center);
+        btnConfig.setPosition(ANCHO-texturaBtnConfig.getWidth()+30,texturaBtnConfig.getHeight()-20, Align.center);
 
         //btnHowToPlay
         Texture texturaBtnAyuda=new Texture("botonesMenu/btnHow.png");
@@ -106,7 +108,7 @@ public class PantallaMenu extends Pantalla {
 
         //Inicializar boton HowToPlay
         ImageButton btnAyuda=new ImageButton(trdBtnAyuda,trdBtnAyudaInverso);
-        btnAyuda.setPosition(ANCHO*0.52f,ALTO-500, Align.center);
+        btnAyuda.setPosition(ANCHO*0.52f+200,ALTO-450, Align.center);
 
         //Programar el evento de click
         btnJugar.addListener(new ClickListener() {
@@ -174,7 +176,7 @@ public class PantallaMenu extends Pantalla {
 
         batch.begin();
         batch.draw(texturaFondo,0,0);
-        batch.draw(titulo,ANCHO/2-(titulo.getWidth()*0.5f),ALTO-170);
+        //batch.draw(titulo,ANCHO/2-(titulo.getWidth()*0.5f),ALTO-170);
         batch.end();
         escenaMenu.draw();
 
@@ -193,7 +195,7 @@ public class PantallaMenu extends Pantalla {
     @Override
     public void dispose() {
         texturaFondo.dispose();
-        titulo.dispose();
+        //titulo.dispose();
         batch.dispose();
     }
 }

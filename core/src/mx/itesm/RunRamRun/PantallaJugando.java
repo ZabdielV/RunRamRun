@@ -1,6 +1,7 @@
 package mx.itesm.RunRamRun;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
@@ -210,6 +211,7 @@ public class PantallaJugando extends Pantalla {
         //Boton de pausa
         btnPausa=juego.getManager().get("pantallaJugando/botonPausa.png");
         Gdx.input.setInputProcessor(new ProcesadorEntrada());
+        Gdx.input.setCatchKey(Input.Keys.BACK,true);
     }
 
     private void crearItems() {

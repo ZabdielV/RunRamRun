@@ -1,6 +1,7 @@
 package mx.itesm.RunRamRun;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
@@ -54,6 +55,7 @@ public class PantallaMarcadores extends Pantalla {
         crearAudio();
         crearTexto();
         cargarPreferencias();
+
     }
 
     private void cargarPreferencias() {
